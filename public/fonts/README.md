@@ -4,8 +4,17 @@
 | ---------------- | -------------- | --------------- | --------------------- | --------------------------------------- |
 | `display.ttf`    | `KioskDisplay` | URW DIN Cond    | **Bold** (700)         | La palabra elegida, titulares, botones |
 | `body.otf`       | `KioskBody`    | Gotham Book     | Book ≈ Regular (400)   | Frases, textos de interfaz            |
-| `script.ttf`     | `KioskScript`  | Arapey Italic   | Italic (400)           | "Tú Eres Inolvidable" (pantalla 01)   |
-| `script-OFL.txt` | —              | —               | —                      | Licencia de Arapey (Open Font License) |
+| `script.ttf`     | `KioskScript`  | Square Peg      | Regular (400), NO cursiva | "Tú Eres Inolvidable" (pantalla 01) |
+| `script-OFL.txt` | —              | —               | —                      | Licencia de Square Peg (Open Font License) |
+
+> `script.ttf` fue **Arapey Italic** hasta que se comprobó contra el Figma, que
+> pide **Square Peg**. Son fuentes muy distintas: Arapey es una serif con
+> cursiva, Square Peg es manuscrita informal.
+>
+> Ojo con el estilo al declararla: Square Peg tiene `italicAngle: 0` y no marca
+> ITALIC en su `fsSelection`. Mientras estuvo registrada como `style: 'italic'`
+> en `FONT_FACES`, el navegador le añadía una inclinación sintética sobre una
+> letra que ya viene manuscrita. Va como `'normal'`.
 
 No se cargan por `@font-face` en CSS: un `@font-face` normal no se descarga
 hasta que un elemento del DOM lo usa, y pintar en canvas no cuenta. Se

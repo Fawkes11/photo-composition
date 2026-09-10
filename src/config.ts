@@ -96,7 +96,7 @@ export const BRAND = {
     display: '"KioskDisplay", "Bebas Neue", "Oswald", "Haettenschweiler", "Arial Narrow", Impact, system-ui, sans-serif',
     // Textos: Gotham Book.
     body: '"KioskBody", "Helvetica Neue", Arial, system-ui, sans-serif',
-    /** Script de "Tú Eres Inolvidable". */
+    /** Square Peg, para "Tú Eres Inolvidable" de la píldora (pantalla 01). */
     script: '"KioskScript", "Brush Script MT", "Segoe Script", cursive',
   },
 } as const
@@ -114,7 +114,10 @@ export const FONT_FACES = [
   // El archivo real es URW DIN Cond Bold (usWeightClass 700), no Regular.
   { family: 'KioskDisplay', url: asset('/fonts/display.ttf'), weight: '700', style: 'normal' },
   { family: 'KioskBody', url: asset('/fonts/body.otf'), weight: '400', style: 'normal' },
-  { family: 'KioskScript', url: asset('/fonts/script.ttf'), weight: '400', style: 'italic' },
+  // Square Peg NO es una cursiva: su italicAngle es 0 y su fsSelection no
+  // marca ITALIC. Declararla como 'italic' hacía que el navegador le aplicara
+  // una inclinación falsa encima de una letra que ya viene manuscrita.
+  { family: 'KioskScript', url: asset('/fonts/script.ttf'), weight: '400', style: 'normal' },
 ] as const
 
 /* ─────────────────────── RESOLUCIONES ──────────────────────── */

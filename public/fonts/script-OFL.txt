@@ -1,9 +1,8 @@
-Copyright (c) 2011, Eduardo Tunni (http://www.tipo.net.ar),
-with Reserved Font Name "Arapey"
+Copyright 1995-2021 The Square Peg Project Authors (https://github.com/googlefonts/square-peg)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:
-https://openfontlicense.org
+https://scripts.sil.org/OFL
 
 
 -----------------------------------------------------------
