@@ -1,0 +1,76 @@
+# Compila el kiosco y lo publica en GitHub Pages.
+#
+# La base se calcula sola a partir del nombre del repo, así funciona tanto en
+# una project page (usuario.github.io/<repo>/) como en una user page
+# (usuario.github.io), donde el nombre del repo ya termina en .github.io y la
+# base tiene que ser '/'.
+name: Deploy a GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Permite lanzarlo a mano desde la pestaña Actions.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Si se empujan dos commits seguidos, que gane el último y no se pisen.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # El proyecto usa pnpm (pnpm-lock.yaml, lockfile v9). pnpm se instala
+      # ANTES que setup-node, porque `cache: pnpm` necesita encontrar el
+      # binario para localizar el store.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Calcular la base
+        id: base
+        run: |
+          if [[ "${{ github.event.repository.name }}" == *.github.io ]]; then
+            echo "value=/" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=/${{ github.event.repository.name }}/" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Compilar
+        env:
+          VITE_BASE: ${{ steps.base.outputs.value }}
+        run: pnpm run build
+
+      # Sin esto GitHub sirve el sitio con Jekyll, que ignora los archivos y
+      # carpetas que empiezan por guion bajo. Los .wasm de MediaPipe no lo
+      # necesitan hoy, pero cuesta cero y evita una sorpresa difícil de ver.
+      - run: touch dist/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

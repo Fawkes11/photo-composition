@@ -1,0 +1,187 @@
+@import 'tailwindcss';
+
+/*
+ * Las tipografías de marca (KioskDisplay/KioskBody/KioskScript) NO se
+ * declaran aquí con @font-face. Se cargan por JS con la API `FontFace` en
+ * `src/lib/assets.ts` (`ensureFontsReady`) y se registran en el mismo
+ * `document.fonts` global que usa el DOM — sirve tanto para el texto normal
+ * como para el canvas de la pieza. Ver FONT_FACES en config.ts.
+ */
+
+/* ───────────────────────── MODO KIOSCO ─────────────────────── */
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: #000;
+  overflow: hidden;
+}
+
+/*
+ * Sin scroll del documento, sin rebote, sin pull-to-refresh.
+ * `overscroll-behavior: none` en html Y body: Chrome Android mira el primero
+ * de los dos que tenga scroll propio, y aquí ninguno lo tiene.
+ */
+html,
+body {
+  overscroll-behavior: none;
+  touch-action: none;
+  position: fixed;
+  inset: 0;
+}
+
+* {
+  /* Sin selección de texto ni menú de "copiar" al mantener pulsado. */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  /* Sin destello gris al tocar en Android. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.kiosk-button:disabled {
+  cursor: default;
+}
+
+/* El cursor sobra en un tótem táctil. Quítalo si depuras con ratón. */
+body {
+  cursor: none;
+}
+
+/*
+ * Único contenedor con scroll de toda la app (pantalla 02).
+ * `pan-y` habilita el arrastre vertical pese al `touch-action: none` global, y
+ * `overscroll-behavior: contain` impide que al llegar al final el gesto se
+ * propague al documento y dispare el pull-to-refresh.
+ */
+.word-scroller {
+  overflow-y: auto;
+  overflow-x: hidden;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.word-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+/* ───────── MARCADOR DE MATERIAL PENDIENTE ───────── */
+
+/*
+ * Los marcadores turquesa se posicionan solos: el componente los coloca en el
+ * hueco exacto del recurso que falta (ver src/components/AssetImage.tsx).
+ */
+.missing-asset {
+  position: absolute;
+  /* Sin recorte: en huecos pequeños la chapa debe poder salirse y leerse. */
+}
+
+/* ───────────────────────── TIPOGRAFÍA ──────────────────────── */
+
+/*
+ * Resplandor de los titulares blancos sobre el fondo rojo. En las maquetas el
+ * texto no está simplemente encima: irradia.
+ */
+.glow-text {
+  text-shadow:
+    0 0 18px rgba(255, 255, 255, 0.45),
+    0 0 60px rgba(255, 190, 200, 0.35),
+    0 6px 30px rgba(80, 0, 15, 0.5);
+}
+
+/* ───────────────────────── ANIMACIONES ─────────────────────── */
+
+@keyframes flash {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes countdown-pop {
+  from {
+    transform: scale(0.72);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.countdown-pop {
+  animation: countdown-pop 380ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+/* Arco de la cuenta regresiva: se vacía a lo largo de cada segundo. */
+@keyframes countdown-sweep {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: var(--sweep);
+  }
+}
+
+.countdown-sweep {
+  animation-name: countdown-sweep;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.breathe {
+  animation: breathe 2.4s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  border-style: solid;
+  border-width: 10px;
+  border-radius: 9999px;
+  animation: spin 900ms linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breathe,
+  .countdown-pop {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}

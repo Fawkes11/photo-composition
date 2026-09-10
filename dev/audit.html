@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Auditoría del pipeline</title>
+    <style>
+      body { margin: 0; background: #111; color: #d7ffd7; font: 14px/1.55 ui-monospace, Menlo, Consolas, monospace; padding: 20px; }
+      pre { white-space: pre-wrap; margin: 0 0 20px; }
+      .bad { color: #ff8080; }
+      .good { color: #7dff9b; }
+      img { max-width: 320px; border: 1px solid #444; vertical-align: top; margin: 0 10px 10px 0; }
+      figure { display: inline-block; margin: 0 10px 10px 0; }
+      figcaption { color: #9ad; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <pre id="out">auditando…</pre>
+    <div id="shots"></div>
+    <script type="module" src="/dev/audit.ts"></script>
+  </body>
+</html>
