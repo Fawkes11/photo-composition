@@ -969,7 +969,26 @@ export const LAYOUT = {
       taglineFontSize: 23.5,
     },
     /** Radio 15 y texto en el rojo de las maquetas, medido en el Figma. */
-    cta: { x: 318, y: 1674, width: 444, height: 106, radius: 15, fontSize: 48 },
+    cta: {
+      x: 318,
+      y: 1674,
+      width: 444,
+      height: 106,
+      radius: 15,
+      fontSize: 48,
+      /**
+       * Las DOS drop shadows del Figma. Importante: ambas van en el rojo de
+       * las maquetas al 100 %, no en un negro translúcido — no son sombras
+       * proyectadas sino un resplandor que separa el botón del fondo rojo.
+       *
+       *   1) X0 Y4  blur 26.8  →  la abierta, da el asiento
+       *   2) X0 Y0  blur 14.9  →  la cerrada, ciñe el contorno
+       */
+      shadow:
+        `0 4px 26.8px ${BRAND.colors.primaryMockup}, 0 0 14.9px ${BRAND.colors.primaryMockup}`,
+      /** El texto lleva su propio halo, del mismo color que la letra. */
+      textGlow: `0 0 14.9px ${BRAND.colors.primaryMockup}`,
+    },
 
     /** Los cuatro haces del Figma: dos arriba-izquierda, dos abajo-derecha. */
     beams: [

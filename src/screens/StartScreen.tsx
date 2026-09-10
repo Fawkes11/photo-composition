@@ -150,9 +150,8 @@ export function StartScreen() {
           fontFamily: BRAND.fonts.display,
           fontSize: L.cta.fontSize,
           letterSpacing: '0.06em',
-          // Doble sombra: una corta y cerrada que asienta el botón sobre la
-          // tarjeta, y otra larga y difusa que lo separa del fondo.
-          boxShadow: '0 6px 14px rgba(40,0,8,0.35), 0 20px 48px rgba(40,0,8,0.45)',
+          boxShadow: L.cta.shadow,
+          textShadow: L.cta.textGlow,
         }}
       >
         INICIAR
