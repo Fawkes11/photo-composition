@@ -51,7 +51,7 @@ export function ResultScreen() {
         src={IMAGES.product}
         label="producto"
         fit="contain"
-        style={{ left: L.product.x, top: L.product.y, width: L.product.size, height: L.product.size }}
+        style={{ left: L.product.x, top: L.product.y, transform: `rotate(${L.product.rotation ?? 0}deg)`, width: L.product.size, height: L.product.size }}
       />
 
       <h2
@@ -82,22 +82,7 @@ export function ResultScreen() {
         Escanea el siguiente código QR para descargar tu foto.
       </p>
 
-      {/* Pieza compuesta, con el filo dorado de la maqueta. */}
-      <div
-        className="absolute overflow-hidden"
-        style={{
-          left: L.preview.x,
-          top: L.preview.y,
-          width: L.preview.width,
-          height: L.preview.height,
-          borderRadius: L.preview.radius,
-          border: `${L.preview.border}px solid ${BRAND.colors.gold}`,
-          boxShadow: '0 0 60px rgba(255,180,190,0.35), 0 24px 60px rgba(0,0,0,0.4)',
-          background: 'rgba(0,0,0,0.2)',
-        }}
-      >
-        {piece && <img src={piece.objectUrl} alt={`Pieza ${word?.word ?? ''}`} className="h-full w-full object-cover" />}
-      </div>
+      <PiecePreview piece={piece} word={word?.word} />
 
       <div
         className="absolute flex items-center justify-center bg-white"
@@ -119,6 +104,81 @@ export function ResultScreen() {
 
       {DEBUG.downloadPiece && piece && <DownloadPieceBar piece={piece} wordId={word?.id ?? 'pieza'} />}
     </ScreenLayer>
+  )
+}
+
+/**
+ * Pieza compuesta dentro de su marco dorado.
+ *
+ * El marco y la foto son elementos SEPARADOS, como en el Figma: el marco mide
+ * 376×639 y la foto 333×592 centrada dentro, lo que deja el aire de ~22 px que
+ * el diseño pide. Antes el borde se pintaba sobre la propia imagen, así que no
+ * había ningún hueco.
+ *
+ * El trazo va con el degradado "Gold", no con un oro plano. Como el marco no
+ * tiene relleno, no basta con poner el degradado de fondo: hay que recortarlo
+ * a un anillo. Eso lo hace la máscara doble de abajo — una capa cubre el área
+ * interior y otra el elemento entero, y al excluir una de otra solo sobrevive
+ * el borde. Es la forma estándar de tener un borde con degradado dejando ver
+ * el fondo a través del centro.
+ */
+function PiecePreview({ piece, word }: { piece: ComposedPiece | null; word?: string }) {
+  const { frame, photo } = L.preview
+
+  // Recorta el relleno y deja solo el anillo del grosor del trazo.
+  const soloElAnillo = {
+    padding: frame.border,
+    background: BRAND.gradients.gold,
+    WebkitMask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+    WebkitMaskComposite: 'xor',
+    mask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+    maskComposite: 'exclude',
+  } as const
+
+  return (
+    <>
+      {/* Trazo nítido. */}
+      <div
+        className="pointer-events-none absolute"
+        style={{
+          left: frame.x,
+          top: frame.y,
+          width: frame.width,
+          height: frame.height,
+          borderRadius: frame.radius,
+          ...soloElAnillo,
+        }}
+      />
+      {/* La misma pieza difuminada encima: el halo del Figma (Rectangle 3). */}
+      <div
+        className="pointer-events-none absolute"
+        style={{
+          left: frame.x,
+          top: frame.y,
+          width: frame.width,
+          height: frame.height,
+          borderRadius: frame.radius,
+          filter: `blur(${frame.glowBlur}px)`,
+          ...soloElAnillo,
+        }}
+      />
+
+      {/* La foto, centrada en el marco. */}
+      <div
+        className="absolute overflow-hidden"
+        style={{
+          left: frame.x + (frame.width - photo.width) / 2,
+          top: frame.y + (frame.height - photo.height) / 2,
+          width: photo.width,
+          height: photo.height,
+          borderRadius: photo.radius,
+          boxShadow: photo.shadow,
+          background: 'rgba(0,0,0,0.2)',
+        }}
+      >
+        {piece && <img src={piece.objectUrl} alt={`Pieza ${word ?? ''}`} className="h-full w-full object-cover" />}
+      </div>
+    </>
   )
 }
 

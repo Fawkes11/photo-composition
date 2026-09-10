@@ -53,6 +53,28 @@ export const BRAND = {
     muted: '#8A8A90',
   },
   /**
+   * Degradados de marca. El oro del Figma NO es un color plano: es un estilo
+   * de color llamado "Gold", un degradado metálico. Pintarlo con un hex único
+   * mata el efecto — la gracia está en el salto al bronce oscuro del 4 % y en
+   * los tres tonos claros del tramo final.
+   */
+  gradients: {
+    /**
+     * Estilo "Gold" del Figma, stop a stop.
+     *
+     * `0deg` = de ABAJO hacia arriba, y los porcentajes se miden desde la base.
+     * No es un capricho: verificado muestreando el render del propio Figma, los
+     * bordes superior e inferior son uniformes a lo ancho (o sea, sin
+     * componente horizontal) y el bronce del 4 % cae en la base. Con un ángulo
+     * diagonal esa banda oscura se iría a una esquina y el filo cambia por
+     * completo.
+     */
+    gold:
+      'linear-gradient(0deg, ' +
+      '#FFF0DA 1%, #94641E 4%, #FFF2DB 83%, ' +
+      '#EAC885 94%, #FBF5D1 98%, #BD9A4B 100%, #ECD8A3 100%)',
+  },
+  /**
    * Tipografías servidas desde /public/fonts. Se cargan por JS con la API
    * `FontFace` (ver `FONT_FACES` más abajo y `src/lib/assets.ts`), no por
    * `@font-face` en CSS: un `@font-face` normal no se descarga hasta que un
@@ -915,7 +937,7 @@ export const LAYOUT = {
       { asset: 'b', x: 620, y: 986, width: 548, height: 912 },
     ] as readonly BeamConfig[],
 
-    flares: [{ x: 650, y: 40, size: 460, intensity: 2.6 }] as readonly FlareConfig[],
+    flares: [{ x: 680, y: -10, size: 460, intensity: 2.6 }] as readonly FlareConfig[],
   },
 
   /* 02 · SELECCIÓN DE PALABRA */
@@ -941,7 +963,7 @@ export const LAYOUT = {
       { asset: 'a', x: -211, y: -15, width: 757, height: 1261 },
       { asset: 'a', x: -1, y: -585, width: 757, height: 1261 },
     ] as readonly BeamConfig[],
-    flares: [{ x: 420, y: 1180, size: 440, intensity: 2.0 }] as readonly FlareConfig[],
+    flares: [{ x: 675, y: 100, size: 440, intensity: 2.0 }] as readonly FlareConfig[],
   },
 
   /* 03 · TOMA DE FOTO */
@@ -965,11 +987,30 @@ export const LAYOUT = {
   result: {
     title: { x: 168, y: 335, width: 745, height: 94, fontSize: 96 },
     subtitle: { x: 208, y: 448, width: 665, height: 70, fontSize: 36, lineHeight: 1.32 },
-    preview: { x: 374, y: 571, width: 333, height: 592, radius: 18, border: 4 },
+    /**
+     * Marco dorado y foto dentro. Son piezas SEPARADAS, no un borde sobre la
+     * imagen: en el Figma el marco es un rectángulo mayor (376×639) y la foto
+     * va dentro (333×592), de ahí el aire de ~22 px alrededor.
+     *
+     * El marco son dos rectángulos superpuestos (371:368 y 371:370), idénticos
+     * salvo que el segundo lleva blur: no es un doble filo, es un halo — una
+     * copia difuminada del mismo trazo encima del nítido. Sin ella el oro se ve
+     * plano y recortado.
+     */
+    preview: {
+      frame: { x: 354, y: 550, width: 376, height: 639, radius: 20, border: 3, glowBlur: 4.7 },
+      /** Nodo "7 1" del Figma: centrado en el marco, con esquina más cerrada. */
+      photo: {
+        width: 333,
+        height: 592,
+        radius: 12,
+        shadow: '14px 15px 25.1px 0px rgba(0, 0, 0, 0.25)',
+      },
+    },
     qr: { x: 417, y: 1249, width: 247, height: 273, radius: 24, padding: 20 },
-    product: { x: 193, y: 1517, size: 1321 },
+    product: { x: 344, y: 1010, rotation: -34.8, size: 1321 },
     buttons: { x: 318, width: 444, top: 1583, height: 106, gap: 26, radius: 16, fontSize: 40 },
     beams: [] as readonly BeamConfig[],
-    flares: [{ x: -120, y: 940, size: 440, intensity: 1.8 }] as readonly FlareConfig[],
+    flares: [{ x: 30, y: 1050, size: 440, intensity: 1.8 }] as readonly FlareConfig[],
   },
 } as const
