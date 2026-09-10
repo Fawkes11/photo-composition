@@ -6,7 +6,6 @@ import { LensFlares } from '../components/LensFlare'
 import { LightBeams } from '../components/LightBeam'
 import { BrandArc } from '../components/BrandArc'
 import { ScreenLayer } from '../components/Stage'
-import { ArrowIcon, CurvedArrow, QrIcon, SelfiePhoneIcon, TapIcon } from '../components/icons'
 import { preloadLayerAssets } from '../lib/assets'
 import { warmUpVision } from '../vision/visionLoader'
 import { useKioskStore } from '../store/kioskStore'
@@ -55,6 +54,24 @@ export function StartScreen() {
         BE UNFORGETTABLE
       </h1>
 
+      {/*
+        Filo bajo el titular. Es un SVG exportado y no un div con degradado
+        porque la forma no es una barra: es una lente que se afila hasta
+        desaparecer en las puntas, con un desenfoque gaussiano encima. El
+        archivo ya trae el sangrado del desenfoque, de ahí sus medidas.
+      */}
+      <img
+        src={IMAGES.titleUnderline}
+        alt=""
+        className="pointer-events-none absolute"
+        style={{
+          left: L.titleUnderline.x,
+          top: L.titleUnderline.y,
+          width: L.titleUnderline.width,
+          height: L.titleUnderline.height,
+        }}
+      />
+
       <p
         className="pointer-events-none absolute text-center"
         style={{
@@ -89,7 +106,7 @@ export function StartScreen() {
         label="tablero"
         fit="cover"
         className="pointer-events-none"
-        style={{ left: L.board.x, top: L.board.y, width: L.board.width, height: L.board.height }}
+        style={{ left: L.board.x, top: L.board.y, transform: `rotate(${L.board.rotate}deg)`, width: L.board.width, height: L.board.height }}
       />
 
       <div
@@ -129,11 +146,13 @@ export function StartScreen() {
           height: L.cta.height,
           borderRadius: L.cta.radius,
           background: BRAND.colors.white,
-          color: BRAND.colors.primary,
+          color: BRAND.colors.primaryMockup,
           fontFamily: BRAND.fonts.display,
           fontSize: L.cta.fontSize,
           letterSpacing: '0.06em',
-          boxShadow: '0 16px 40px rgba(40,0,8,0.45)',
+          // Doble sombra: una corta y cerrada que asienta el botón sobre la
+          // tarjeta, y otra larga y difusa que lo separa del fondo.
+          boxShadow: '0 6px 14px rgba(40,0,8,0.35), 0 20px 48px rgba(40,0,8,0.45)',
         }}
       >
         INICIAR
@@ -164,7 +183,7 @@ function InstructionsCard() {
         className="absolute left-1/2 flex -translate-x-1/2 items-center justify-center rounded-full"
         style={{ top: L.stepIcon.top, width: L.stepIcon.size, height: L.stepIcon.size, background: red }}
       >
-        <TapIcon size={L.stepIcon.size * 0.56} style={{ color: BRAND.colors.white }} />
+        <img src={IMAGES.leadingHand} alt="" width={51} height={56} className="pointer-events-none" />
       </div>
       <p
         className="absolute left-0 right-0 text-center"
@@ -178,7 +197,7 @@ function InstructionsCard() {
           top: L.divider.top,
           left: L.divider.inset,
           right: L.divider.inset,
-          height: 2,
+          height: L.divider.thickness,
           background: 'rgba(228,0,43,0.30)',
         }}
       />
@@ -220,9 +239,9 @@ function InstructionsCard() {
       <div
         className="absolute"
         style={{
-          left: L.card.width / 2 - 1,
+          left: L.card.width / 2 - L.columnDivider.thickness / 2,
           top: L.columnDivider.top,
-          width: 2,
+          width: L.columnDivider.thickness,
           height: L.columnDivider.height,
           background: 'rgba(228,0,43,0.30)',
         }}
@@ -242,19 +261,20 @@ function InstructionsCard() {
       >
         3. HAZ TU MEJOR POSE, TOMÁTE LA FOTO Y RECIBELA POR QR
       </p>
-      <div
-        className="absolute flex items-center justify-center"
-        style={{ top: L.howToIcons.top, right: 24, width: 300, gap: 26, color: red }}
-      >
-        <SelfiePhoneIcon size={L.howToIcons.selfieWidth} />
-        <ArrowIcon size={L.shortArrow.width} />
-        <QrIcon size={L.howToIcons.qrSize} />
-      </div>
-      <CurvedArrow
-        width={110}
-        height={140}
-        className="absolute"
-        style={{ right: 96, top: L.howToIcons.top + 120, color: red }}
+      {/*
+        El SVG exportado trae el paso 3 entero —móvil, flecha recta, QR y flecha
+        curva— así que sustituye a los cuatro componentes de icono que había.
+      */}
+      <img
+        src={IMAGES.stepThree}
+        alt=""
+        className="pointer-events-none absolute"
+        style={{
+          left: L.stepThree.x,
+          top: L.stepThree.y,
+          width: L.stepThree.width,
+          height: L.stepThree.height,
+        }}
       />
 
       {/* Mockup del resultado */}
@@ -265,7 +285,13 @@ function InstructionsCard() {
         style={{ left: L.phone.x, top: L.phone.y, width: L.phone.width, height: L.phone.height }}
       />
 
-      {/* Banda "Nuestra pared de lo inolvidable" */}
+      {/*
+        Banda "Nuestra pared de lo inolvidable".
+
+        El fondo es un rectángulo de color LISO con un desenfoque muy alto, no
+        un degradado: así se funde con la tarjeta por los cuatro lados a la vez.
+        Va en su propia capa porque el blur no debe tocar al texto de encima.
+      */}
       <div
         className="absolute"
         style={{
@@ -273,12 +299,20 @@ function InstructionsCard() {
           top: L.wallBand.y,
           width: L.wallBand.width,
           height: L.wallBand.height,
-          background: 'linear-gradient(to right, rgba(247,185,196,0.95) 0%, rgba(247,185,196,0.75) 62%, rgba(247,185,196,0) 100%)',
+          background: BRAND.colors.primaryMockup,
+          filter: `blur(${L.wallBand.blur}px)`,
         }}
       />
       <p
         className="absolute leading-[1.1]"
-        style={{ left: 44, top: L.wallBand.y + 26, width: 260, fontSize: 27, color: '#8E0C1E', fontFamily: BRAND.fonts.display }}
+        style={{
+          left: L.wallTitle.x,
+          top: L.wallTitle.y,
+          width: L.wallTitle.width,
+          fontSize: L.wallTitle.fontSize,
+          color: BRAND.colors.white,
+          fontFamily: BRAND.fonts.display,
+        }}
       >
         NUESTRA PARED
         <br />
@@ -286,7 +320,15 @@ function InstructionsCard() {
       </p>
       <p
         className="absolute"
-        style={{ left: 44, top: L.wallBand.y + 92, width: 250, fontSize: 20, lineHeight: 1.25, color: '#6E0A17', fontFamily: BRAND.fonts.body }}
+        style={{
+          left: L.wallBody.x,
+          top: L.wallBody.y,
+          width: L.wallBody.width,
+          fontSize: L.wallBody.fontSize,
+          lineHeight: L.wallBody.lineHeight,
+          color: BRAND.colors.white,
+          fontFamily: BRAND.fonts.body,
+        }}
       >
         Tu palabra se suma a muchas otras para inspirar a más personas.
       </p>

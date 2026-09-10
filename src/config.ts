@@ -42,6 +42,13 @@ export const BRAND = {
     white: '#FFFFFF',
     /** Rojo Revlon de los botones y titulares dentro de tarjeta. */
     primary: '#E4002B',
+    /**
+     * El rojo que usan de verdad las maquetas del Figma: el texto de INICIAR,
+     * la banda de "Nuestra pared"... NO coincide con `primary` (#E4002B), que
+     * es el rojo corporativo. Se mantienen separados a propósito hasta decidir
+     * cuál manda; unificarlos cambia las cinco pantallas de golpe.
+     */
+    primaryMockup: '#DD1945',
     /** Rojo profundo del fondo y de la pantalla de carga. */
     primaryDeep: '#8E0C1E',
     /** Casi negro rojizo: fondo de la pantalla 04. */
@@ -690,6 +697,15 @@ export const IMAGES = {
   backdrop: asset('/images/backdrop.png'),
   /** Marca de labios de la tarjeta de instrucciones. */
   lips: asset('/images/lips.png'),
+  /** Icono del paso 1, dentro del círculo rojo. */
+  leadingHand: asset('/images/leading-hand.svg'),
+  /**
+   * Paso 3 completo en un solo SVG: móvil, flecha recta, QR y flecha curva.
+   * Sustituye a los cuatro componentes de icono que había antes.
+   */
+  stepThree: asset('/images/3-step.svg'),
+  /** Filo difuminado bajo "BE UNFORGETTABLE" (Vector 10 del Figma). */
+  titleUnderline: asset('/images/decor/title-underline.svg'),
 
   /* — PENDIENTE — */
   /** Fondo terciopelo oscuro de la pantalla 04 (la de procesando). */
@@ -881,27 +897,49 @@ export const LAYOUT = {
    */
   start: {
     title: { x: 83, y: 388, width: 915, height: 100, fontSize: 130, letterSpacing: -0.01 },
-    subtitle: { x: 138, y: 556, width: 804, height: 70, fontSize: 33, lineHeight: 1.06 },
+    /** Gotham Book 36/0.977, medido en el Figma (nodo 355:19296). */
+    subtitle: { x: 138, y: 556, width: 804, height: 70, fontSize: 36, lineHeight: 0.977 },
+    /**
+     * Filo bajo el titular (Vector 10, 384:111): x=180, y=527.5, ancho 698.5.
+     * No es un rectángulo — es una lente que se afila hasta desaparecer en las
+     * puntas, más un desenfoque gaussiano de 3.15. Por eso va como SVG
+     * exportado y no como un div con degradado: reproducirlo a mano se acerca,
+     * pero el afilado de las puntas no sale igual.
+     *
+     * El SVG mide 711.1×18.6 porque incluye el sangrado del desenfoque; de ahí
+     * los offsets, que lo recolocan sobre la línea real.
+     */
+    titleUnderline: { x: 180 - 6.3, y: 527.5 - 9.3, width: 711.1, height: 18.6 },
     card: { x: 176, y: 655, width: 728, height: 922, radius: 26 },
 
     /* — hijos de la tarjeta, relativos a (176, 655) — */
     stepIcon: { top: 65, size: 77 },
     step1: { top: 166, fontSize: 35 },
-    divider: { top: 214, inset: 96 },
+    /** Vector 11 (384:142): 515 de ancho y trazo de 3, centrado en la tarjeta. */
+    divider: { top: 232, inset: (728 - 515) / 2, thickness: 3 },
     stepsRow: { top: 281, fontSize: 24, leftX: 67, leftWidth: 226, rightX: 385, rightWidth: 300 },
     swatch: { x: 87, y: 299, size: 222 },
     /** El PNG viene recto; la inclinación de la maqueta se aplica por CSS. */
     product: { x: 114, y: 319, size: 179, rotate: -24 },
-    columnDivider: { x: 364, top: 281, height: 189 },
-    howToIcons: { top: 366, selfieX: 415, selfieWidth: 86, selfieHeight: 112, qrX: 570, qrSize: 100 },
-    shortArrow: { x: 519, y: 416, width: 41 },
-    curvedArrow: { x: 555, y: 451, width: 107, height: 131 },
+    /** Vector 7 (371:424): mismo trazo de 3 que el divisor horizontal. */
+    columnDivider: { x: 364, top: 281, height: 189, thickness: 3 },
+    /**
+     * Paso 3 en un único SVG. La caja sale de unir los cuatro nodos del Figma
+     * (móvil 591,1021 · flecha · QR · curva), que dan exactamente 255×217 — el
+     * tamaño del archivo exportado.
+     */
+    stepThree: { x: 415, y: 366, width: 255, height: 217 },
     phone: { x: 218, y: 543, width: 373, height: 377 },
-    wallBand: { x: 20, y: 621, width: 356, height: 181 },
+    /**
+     * Banda de "Nuestra pared" (Rectangle 12, 371:388). No es un degradado:
+     * es un rectángulo de color liso con un desenfoque muy alto, que lo
+     * convierte en una mancha suave. La tarjeta recorta lo que se sale.
+     */
+    wallBand: { x: 20, y: 621, width: 356, height: 181, blur: 49.3 },
     wallTitle: { x: 46, y: 650, width: 222, fontSize: 27 },
-    wallBody: { x: 49, y: 718, width: 240, fontSize: 20 },
+    wallBody: { x: 49, y: 718, width: 240, fontSize: 20, lineHeight: 1.25 },
     /** La rotación de −19.3° ya viene horneada en el PNG exportado. */
-    lips: { x: 505, y: 772, width: 192, height: 156 },
+    lips: { x: 505, y: 712, width: 192, height: 156 },
 
     /* — atrezo y controles, en coordenadas de pantalla — */
     /** Son DOS revistas superpuestas, no una. */
@@ -909,7 +947,7 @@ export const LAYOUT = {
       { x: -270, y: 1798, width: 655, height: 704 },
       { x: -25, y: 1533, width: 494, height: 596 },
     ],
-    board: { x: 731, y: 1345, width: 791, height: 856 },
+    board: { x: 600, y: 1424, rotate: 18.38, width: 600, height: 702 },
     /**
      * Los dos textos van colocados, no en flujo: en el Figma están en
      * x=382 y x=529 (relativos a la píldora, 45 y 192) y con tamaños muy
@@ -927,7 +965,8 @@ export const LAYOUT = {
       taglineY: 15,
       taglineFontSize: 23.5,
     },
-    cta: { x: 318, y: 1674, width: 444, height: 106, radius: 16, fontSize: 48 },
+    /** Radio 15 y texto en el rojo de las maquetas, medido en el Figma. */
+    cta: { x: 318, y: 1674, width: 444, height: 106, radius: 15, fontSize: 48 },
 
     /** Los cuatro haces del Figma: dos arriba-izquierda, dos abajo-derecha. */
     beams: [
