@@ -1,5 +1,6 @@
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
@@ -22,5 +23,14 @@ export default defineConfig({
   build: {
     // Los .tflite y el wasm viven en /public y se copian tal cual.
     assetsInlineLimit: 0,
+    rollupOptions: {
+      // Segunda entrada: la pagina de diagnostico, para abrirla EN el
+      // dispositivo que falle. Va aparte del bundle del kiosco, asi que no
+      // pesa en el arranque de la app.
+      input: {
+        index: resolve(__dirname, 'index.html'),
+        diagnostico: resolve(__dirname, 'diagnostico.html'),
+      },
+    },
   },
 })
