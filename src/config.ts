@@ -938,7 +938,7 @@ export const LAYOUT = {
      * es un rectángulo de color liso con un desenfoque muy alto, que lo
      * convierte en una mancha suave. La tarjeta recorta lo que se sale.
      */
-    wallBand: { x: 20, y: 621, width: 356, height: 181, blur: 49.3 },
+    wallBand: { x: 20, y: 621, width: 356, height: 181, blur: 19.3 },
     wallTitle: { x: 46, y: 650, width: 222, fontSize: 27 },
     wallBody: { x: 49, y: 718, width: 240, fontSize: 20, lineHeight: 1.25 },
     /** La rotación de −19.3° ya viene horneada en el PNG exportado. */
@@ -961,6 +961,18 @@ export const LAYOUT = {
       y: 1557,
       width: 406,
       height: 62,
+      radius: 30,
+      /**
+       * Degradado vertical (`bg-gradient-to-b` en el Figma), no plano ni
+       * horizontal: el rojo se oscurece hacia abajo y es lo que le da volumen.
+       */
+      gradient: 'linear-gradient(180deg, #ED0222 0%, #9A0728 100%)',
+      /**
+       * Resplandor INTERIOR crema, pegado al borde por dentro. Es lo que hace
+       * que la píldora parezca iluminada desde su propio canto. No lleva sombra
+       * exterior: en el Figma el nodo no tiene ninguna.
+       */
+      innerGlow: 'inset 0 0 7.3px 4px rgba(255, 254, 221, 0.25)',
       eligesX: 45,
       eligesY: 18,
       eligesFontSize: 36,

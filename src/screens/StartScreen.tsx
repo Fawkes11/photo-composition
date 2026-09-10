@@ -110,15 +110,16 @@ export function StartScreen() {
       />
 
       <div
-        className="pointer-events-none absolute rounded-full flex items-center justify-center gap-4"
+        className="pointer-events-none absolute flex items-center justify-center gap-4"
         style={{
           left: L.pill.x,
           top: L.pill.y,
           width: L.pill.width,
           height: L.pill.height,
-          background: BRAND.colors.primary,
+          borderRadius: L.pill.radius,
+          background: L.pill.gradient,
+          boxShadow: L.pill.innerGlow,
           color: BRAND.colors.white,
-          boxShadow: '0 12px 30px rgba(60,0,10,0.45)',
         }}
       >
         <span
@@ -151,7 +152,6 @@ export function StartScreen() {
           fontSize: L.cta.fontSize,
           letterSpacing: '0.06em',
           boxShadow: L.cta.shadow,
-          textShadow: L.cta.textGlow,
         }}
       >
         INICIAR
@@ -276,13 +276,7 @@ function InstructionsCard() {
         }}
       />
 
-      {/* Mockup del resultado */}
-      <AssetImage
-        src={IMAGES.mockupPhone}
-        label="mockup de móvil"
-        fit="contain"
-        style={{ left: L.phone.x, top: L.phone.y, width: L.phone.width, height: L.phone.height }}
-      />
+      
 
       {/*
         Banda "Nuestra pared de lo inolvidable".
@@ -301,6 +295,13 @@ function InstructionsCard() {
           background: BRAND.colors.primaryMockup,
           filter: `blur(${L.wallBand.blur}px)`,
         }}
+      />
+      {/* Mockup del resultado */}
+      <AssetImage
+        src={IMAGES.mockupPhone}
+        label="mockup de móvil"
+        fit="contain"
+        style={{ left: L.phone.x, top: L.phone.y, width: L.phone.width, height: L.phone.height }}
       />
       <p
         className="absolute leading-[1.1]"
