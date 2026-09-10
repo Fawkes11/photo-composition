@@ -42,14 +42,19 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Se saca de GITHUB_REPOSITORY ("owner/repo") en vez de
+      # github.event.repository.name, que segun el evento que dispare el
+      # workflow puede no venir en el payload.
       - name: Calcular la base
         id: base
         run: |
-          if [[ "${{ github.event.repository.name }}" == *.github.io ]]; then
+          REPO="${GITHUB_REPOSITORY#*/}"
+          if [[ "$REPO" == *.github.io ]]; then
             echo "value=/" >> "$GITHUB_OUTPUT"
           else
-            echo "value=/${{ github.event.repository.name }}/" >> "$GITHUB_OUTPUT"
+            echo "value=/$REPO/" >> "$GITHUB_OUTPUT"
           fi
+          echo "base calculada: $(tail -1 "$GITHUB_OUTPUT")"
 
       - name: Compilar
         env:
