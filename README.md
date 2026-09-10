@@ -10,7 +10,8 @@ No hay backend; la subida de la pieza final es un stub.
 npm install
 npm run dev      # http://localhost:5173
 npm run build
-npm run check    # verificaciones sin navegador (color y ajuste de texto)
+npm run check    # verificaciones sin navegador (tipos, color y ajuste de texto)
+npm run typecheck # solo TypeScript (ojo: `tsc --noEmit` a secas NO comprueba nada)
 npm run shots    # capturas de las 5 pantallas en dev/shots (necesita npm run dev)
 ```
 
@@ -358,8 +359,19 @@ la foto de la modelo.
 
 `npm run check` corre sin navegador, con Node:
 
+- `typecheck` — TypeScript sobre todo el proyecto.
 - `check:color` — curvas (identidad, monotonía de la S) y parser `.cube`.
 - `check:text` — las 30 frases contra las cajas reales de `TEXT_LAYERS`.
+
+> **Para comprobar tipos usa `npm run typecheck`, nunca `tsc --noEmit` a secas.**
+>
+> `tsconfig.json` es un archivo de solución: lleva `"files": []` y solo
+> `references` a `tsconfig.app.json` y `tsconfig.node.json`. Un `tsc --noEmit`
+> pelado lo resuelve, encuentra cero archivos, **no comprueba nada y sale con
+> éxito**. Da una falsa sensación de seguridad muy convincente: pasa siempre,
+> incluso con errores obvios. Hace falta `tsc -b`, que sigue las referencias, y
+> es lo que hacen `npm run typecheck` y `npm run build`. Ambos tsconfig llevan
+> `noEmit: true`, así que `-b` no escribe ningún archivo.
 
 `npm run shots` recorre el flujo entero en Chrome headless —con la cámara
 sintética de Chrome, así que también pasa por la pantalla 03 y el escape de los

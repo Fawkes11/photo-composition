@@ -8,9 +8,10 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "typecheck": "tsc -b",
     "check:color": "node --experimental-strip-types --no-warnings scripts/check-color.ts",
     "check:text": "node --experimental-strip-types --no-warnings scripts/check-text-fit.ts",
-    "check": "npm run check:color && npm run check:text",
+    "check": "npm run typecheck && npm run check:color && npm run check:text",
     "shots": "node dev/shots.mjs"
   },
   "dependencies": {

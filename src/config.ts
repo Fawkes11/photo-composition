@@ -1011,6 +1011,6 @@ export const LAYOUT = {
     product: { x: 344, y: 1010, rotation: -34.8, size: 1321 },
     buttons: { x: 318, width: 444, top: 1583, height: 106, gap: 26, radius: 16, fontSize: 40 },
     beams: [] as readonly BeamConfig[],
-    flares: [{ x: 30, y: 1050, size: 440, intensity: 1.8 }] as readonly FlareConfig[],
+    flares: [{ x: 30, y: 1050, size: 440, intensity: 5.8 }] as readonly FlareConfig[],
   },
 } as const
