@@ -17,11 +17,20 @@ export type PersonMask = {
 /**
  * Devuelve la máscara de persona del recorte dado.
  *
- * El modelo binario devuelve una o dos máscaras de confianza según el build, y
- * el orden de las categorías no está garantizado. En vez de fijar un índice a
- * ciegas se comprueba la polaridad contra el borde de la imagen: el marco de un
- * encuadre de medio cuerpo es fondo casi por definición, así que si ahí la
- * confianza es alta, la máscara viene invertida y se da la vuelta.
+ * Qué máscara es la buena se decide por la ETIQUETA que declara el modelo, no
+ * por el contenido de la imagen. `selfie_segmenter.tflite` publica
+ * `getLabels() === ['selfie']` y una única máscara de confianza, donde el valor
+ * alto ya significa "persona": no hay nada que invertir.
+ *
+ * Aquí hubo una heurística que miraba la banda perimetral y, si la confianza
+ * era alta en el borde, daba la vuelta a la máscara. Partía de que "el marco de
+ * un encuadre de medio cuerpo es fondo casi por definición", y eso es falso en
+ * cuanto alguien se acerca: en un selfie de móvil la persona llena el encuadre,
+ * el borde ES persona, y la heurística invertía una máscara correcta. Medido
+ * con el mismo sujeto a distintas distancias, la cobertura caía del 96,3 % al
+ * 3,7 % — la persona desaparecía de la pieza. Ninguna heurística espacial puede
+ * resolverlo: si la persona llena el cuadro, no queda borde de fondo con el que
+ * comparar. Ver dev/polarity-check.html.
  */
 export async function segmentPerson(source: ImageBitmap | OffscreenCanvas): Promise<PersonMask> {
   const segmenter = await loadSegmenter()
@@ -31,38 +40,52 @@ export async function segmentPerson(source: ImageBitmap | OffscreenCanvas): Prom
     const masks = result.confidenceMasks
     if (!masks || masks.length === 0) throw new Error('El segmentador no devolvió máscaras')
 
-    const mask = masks.length > 1 ? masks[1] : masks[0]
+    const mask = masks[personMaskIndex(segmenter, masks.length)]
     const raw = mask.getAsFloat32Array()
     // El buffer pertenece a la tarea y muere con result.close(): hay que copiar.
     const data = new Float32Array(raw)
-    const { width, height } = mask
 
-    if (borderMean(data, width, height) > 0.5) {
-      for (let i = 0; i < data.length; i++) data[i] = 1 - data[i]
-    }
-
-    return { data, width, height }
+    return { data, width: mask.width, height: mask.height }
   } finally {
     result.close()
   }
 }
 
-/** Media de la máscara en una banda perimetral del 4%. */
-function borderMean(data: Float32Array, width: number, height: number): number {
-  const band = Math.max(1, Math.round(Math.min(width, height) * 0.04))
-  let sum = 0
-  let count = 0
+/** Etiquetas que un modelo de segmentación usa para la clase "persona". */
+const PERSON_LABEL = /selfie|person|persona|foreground|human/i
 
-  for (let y = 0; y < height; y++) {
-    const isEdgeRow = y < band || y >= height - band
-    for (let x = 0; x < width; x++) {
-      if (!isEdgeRow && x >= band && x < width - band) continue
-      sum += data[y * width + x]
-      count++
-    }
+let indexCache: number | null = null
+
+/**
+ * Índice de la máscara de persona, según las etiquetas que declara el modelo.
+ *
+ * Se cachea porque el segmentador es un singleton: las etiquetas no cambian
+ * entre fotogramas y `getLabels()` no es gratis.
+ */
+function personMaskIndex(segmenter: unknown, maskCount: number): number {
+  if (indexCache !== null) return indexCache
+
+  const labels = (segmenter as { getLabels?: () => string[] }).getLabels?.() ?? []
+  const labelled = labels.findIndex((label) => PERSON_LABEL.test(label))
+
+  if (labelled >= 0 && labelled < maskCount) {
+    indexCache = labelled
+  } else if (maskCount === 1) {
+    // Un segmentador de selfie con una sola salida da la probabilidad de
+    // persona directamente. Es el caso del modelo que usamos hoy.
+    indexCache = 0
+  } else {
+    // Modelo distinto, con varias clases y sin etiqueta reconocible. Por
+    // convención la clase 0 es el fondo, así que se usa la última. No se
+    // adivina en silencio: si esto salta, hay que mirar el modelo nuevo.
+    indexCache = maskCount - 1
+    console.warn(
+      `[segmentation] no reconozco la clase de persona en ${JSON.stringify(labels)}; ` +
+        `uso la máscara ${indexCache} de ${maskCount}`,
+    )
   }
 
-  return count === 0 ? 0 : sum / count
+  return indexCache
 }
 
 /**
