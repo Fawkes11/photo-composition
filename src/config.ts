@@ -796,6 +796,21 @@ export const DEBUG = {
    * con la marca.
    */
   missingLayerFrame: false,
+  /**
+   * Habilita "TOMAR FOTO" desde el primer momento, sin esperar a que la
+   * detección dé el encuadre por bueno.
+   *
+   * Para probar en el tótem: ahorra los 8 s del fallback (y los 16 s del
+   * escape final) en cada intento, que al hacer decenas de capturas seguidas
+   * se vuelven insufribles.
+   *
+   * NO se salta `cameraState === 'ready'`, y es deliberado: disparar antes de
+   * que el <video> tenga dimensiones hace que `captureFrame` lance.
+   *
+   * En la activación tiene que estar en false. La validación de encuadre es lo
+   * único que evita piezas con la cabeza o los brazos cortados.
+   */
+  captureAlwaysEnabled: true,
 } as const
 
 /* ──────────────────────── UI / KIOSCO ──────────────────────── */

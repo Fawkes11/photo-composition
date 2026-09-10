@@ -57,7 +57,10 @@ export function CaptureScreen() {
     }
   }, [videoRef, setCaptured, startProcessing])
 
-  const enabled = cameraState === 'ready' && isCaptureEnabled(status)
+  // La cámara lista manda siempre: `captureFrame` lanza si el <video> todavía
+  // no tiene dimensiones. Lo que `DEBUG.captureAlwaysEnabled` se salta es solo
+  // la validación de encuadre, para poder disparar sin esperar al fallback.
+  const enabled = cameraState === 'ready' && (DEBUG.captureAlwaysEnabled || isCaptureEnabled(status))
   const showError = cameraState === 'error'
 
   return (
