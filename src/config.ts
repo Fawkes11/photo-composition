@@ -991,9 +991,9 @@ export const LAYOUT = {
        * PNG ya viene con una inclinación horneada: sumarle un giro horario la
        * tumbaba todavía más en vez de enderezarla hacia donde pide el diseño.
        */
-      { x: -270, y: 1798, width: 655, height: 704, rotate: -27 },
+      { x: -157, y: 1675, width: 449, height: 561, rotate: -27 },
       /** La de delante se queda recta. */
-      { x: -25, y: 1533, width: 494, height: 596, rotate: 0 },
+      { x: 0, y: 1533, width: 449, height: 561, rotate: 0 },
     ],
     board: { x: 600, y: 1424, rotate: 18.38, width: 600, height: 702 },
     /**
