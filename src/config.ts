@@ -1049,7 +1049,7 @@ export const LAYOUT = {
       { asset: 'b', x: 620, y: 986, width: 548, height: 912 },
     ] as readonly BeamConfig[],
 
-    flares: [{ x: 680, y: -10, size: 460, intensity: 2.6 }] as readonly FlareConfig[],
+    flares: [{ x: 680, y: -10, size: 460, intensity: 1.2 }] as readonly FlareConfig[],
   },
 
   /* 02 · SELECCIÓN DE PALABRA */
@@ -1082,7 +1082,7 @@ export const LAYOUT = {
       { asset: 'a', x: -211, y: -15, width: 757, height: 1261 },
       { asset: 'a', x: -1, y: -585, width: 757, height: 1261 },
     ] as readonly BeamConfig[],
-    flares: [{ x: 675, y: 100, size: 440, intensity: 2.0 }] as readonly FlareConfig[],
+    flares: [{ x: 675, y: 100, size: 440, intensity: 1.3 }] as readonly FlareConfig[],
   },
 
   /* 03 · TOMA DE FOTO */
@@ -1130,6 +1130,6 @@ export const LAYOUT = {
     product: { x: 344, y: 1010, rotation: -34.8, size: 1321 },
     buttons: { x: 318, width: 444, top: 1583, height: 106, gap: 26, radius: 16, fontSize: 40 },
     beams: [] as readonly BeamConfig[],
-    flares: [{ x: 30, y: 1050, size: 440, intensity: 5.8 }] as readonly FlareConfig[],
+    flares: [{ x: 30, y: 1050, size: 440, intensity: 1.8 }] as readonly FlareConfig[],
   },
 } as const
