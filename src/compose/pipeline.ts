@@ -99,8 +99,12 @@ export async function composePiece({ frame, word, styleId }: ComposeInput): Prom
  *
  * La segmentación corre sobre el recorte SIN tratar: la LUT y el viñeteado
  * mueven los colores y el modelo acierta menos con la imagen ya graduada.
+ *
+ * Se exporta para que los bancos de pruebas puedan mirar el recorte por
+ * separado, antes de componerlo. Si lo reimplementaran, estarían inspeccionando
+ * algo distinto de lo que entrega el tótem.
  */
-async function buildPersonLayer(frame: CapturedFrame, style: PhotoStyle): Promise<ImageBitmap> {
+export async function buildPersonLayer(frame: CapturedFrame, style: PhotoStyle): Promise<ImageBitmap> {
   const { width: boxWidth, height: boxHeight } = PERSON.box
   const source = anchoredCover(frame.width, frame.height, boxWidth, boxHeight)
 

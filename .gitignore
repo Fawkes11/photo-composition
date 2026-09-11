@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Capturas de prueba de la webcam real (dev/samples): son fotos de personas
+# identificables y el repositorio es público. Se quedan en local.
+dev/samples/
+
+# El backend no va a GitHub: se despliega a mano en Cloudflare desde la máquina
+# y el repositorio es público. Los archivos siguen en local.
+backend/

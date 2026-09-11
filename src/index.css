@@ -53,6 +53,34 @@ button {
   cursor: pointer;
 }
 
+/*
+ * Los botones centran su texto A MANO, sin depender del navegador.
+ *
+ * Un <button> con altura fija centra su contenido por su cuenta, pero CÓMO lo
+ * hace no está especificado igual en todos: Chrome, Safari de iOS y Samsung
+ * Internet dan resultados distintos. Se veía en un iPhone 16, un Galaxy S25 y
+ * un A56: el texto subía unos píxeles respecto a Chrome de escritorio.
+ *
+ * El reset global de más arriba lo agrava. `font: inherit` arrastra también el
+ * `line-height`, que acaba siendo el 1.5 heredado — o sea 72 px de caja de
+ * línea dentro de un botón de 106. Cuánto sobra por arriba y por abajo queda
+ * entonces en manos del navegador.
+ *
+ * Basta con `flex`: el centrado de flexbox SÍ está especificado, así que la
+ * caja de línea queda en el mismo sitio en todos los navegadores. No se toca el
+ * `line-height` a propósito — probado con `line-height: 1` y el texto de las
+ * píldoras subía 2 px respecto a como lo aprobó el diseñador. Se arregla la
+ * inconsistencia sin cambiar el aspecto.
+ *
+ * Las píldoras de la pantalla 02 ya lo hacían así en su JSX, y son justo las
+ * que NO se descuadraban.
+ */
+.kiosk-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .kiosk-button:disabled {
   cursor: default;
 }

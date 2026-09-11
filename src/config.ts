@@ -779,17 +779,17 @@ export const RESULT = {
  */
 export const IMAGES = {
   /* — Recibidos — */
-  model: asset('/images/model.png'),
-  product: asset('/images/product-glimmer.png'),
-  swatch: asset('/images/swatch.png'),
-  mockupPhone: asset('/images/mockup-phone.png'),
-  mockupMagazine: asset('/images/mockup-magazine.png'),
-  mockupBoard: asset('/images/mockup-board.png'),
+  model: asset('/images/model.webp'),
+  product: asset('/images/product-glimmer.webp'),
+  swatch: asset('/images/swatch.webp'),
+  mockupPhone: asset('/images/mockup-phone.webp'),
+  mockupMagazine: asset('/images/mockup-magazine.webp'),
+  mockupBoard: asset('/images/mockup-board.webp'),
 
   /** Fondo rojo con haces de luz, común a las pantallas 01, 02 y 05. */
-  backdrop: asset('/images/backdrop.png'),
+  backdrop: asset('/images/backdrop.webp'),
   /** Marca de labios de la tarjeta de instrucciones. */
-  lips: asset('/images/lips.png'),
+  lips: asset('/images/lips.webp'),
   /** Icono del paso 1, dentro del círculo rojo. */
   leadingHand: asset('/images/leading-hand.svg'),
   /**
