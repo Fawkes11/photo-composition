@@ -12,7 +12,7 @@
  * La 3 es la que no se puede comprobar mirando el código: se mide el delta de
  * píxeles entre aplicar la etapa y no aplicarla. Delta 0 = etapa muerta.
  */
-import { BRAND, EXPORT, FONT_FACES, LAYERS, PERSON, PHOTO_STYLES, WORDS, type PhotoStyle } from '../src/config'
+import { BRAND, EXPORT, FONT_FACES, LAYERS, PERSON, PHOTO_STYLES, WORDS, type PhotoStyle, IMAGES } from '../src/config'
 import { composePiece } from '../src/compose/pipeline'
 import { applyTreatment } from '../src/compose/imageTreatment'
 import { ensureFontsReady } from '../src/lib/assets'
@@ -74,7 +74,7 @@ async function personTile(): Promise<{ canvas: OffscreenCanvas; ctx: OffscreenCa
   const { width, height } = PERSON.box
   const canvas = new OffscreenCanvas(width, height)
   const ctx = canvas.getContext('2d')!
-  const bitmap = await createImageBitmap(await (await fetch('/images/model.png')).blob())
+  const bitmap = await createImageBitmap(await (await fetch(IMAGES.model)).blob())
   const scale = Math.max(width / bitmap.width, height / bitmap.height)
   const dw = bitmap.width * scale, dh = bitmap.height * scale
   ctx.fillStyle = '#243046'
@@ -176,7 +176,7 @@ try {
   say('4 · PIEZA DE PRUEBA')
   const frameCanvas = new OffscreenCanvas(607, 1080)
   const fctx = frameCanvas.getContext('2d')!
-  const model = await createImageBitmap(await (await fetch('/images/model.png')).blob())
+  const model = await createImageBitmap(await (await fetch(IMAGES.model)).blob())
   const s2 = Math.max(607 / model.width, 1080 / model.height)
   fctx.fillStyle = '#243046'
   fctx.fillRect(0, 0, 607, 1080)

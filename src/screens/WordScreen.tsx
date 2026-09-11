@@ -31,7 +31,7 @@ export function WordScreen() {
 
       <h2
         className="glow-text absolute left-0 right-0 text-center leading-none"
-        style={{ top: L.title.y, fontSize: L.title.fontSize, color: BRAND.colors.white, fontFamily: BRAND.fonts.display }}
+        style={{ top: L.title.y, fontSize: L.title.fontSize, color: BRAND.colors.white, fontFamily: BRAND.fonts.display, fontWeight: 700 }}
       >
         ¿CÓMO ERES?
       </h2>

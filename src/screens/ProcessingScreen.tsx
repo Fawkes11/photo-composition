@@ -93,6 +93,10 @@ export function ProcessingScreen() {
           lineHeight: L.title.lineHeight,
           color: BRAND.colors.white,
           fontFamily: BRAND.fonts.display,
+          // KioskDisplay solo esta registrada en 700 (ver FONT_FACES). Pedirla sin
+          // declarar peso deja el emparejado en manos del navegador y cada motor lo
+          // resuelve distinto: en movil el texto se desplazaba unos pixeles.
+          fontWeight: 700,
         }}
       >
         <span className="block">PROCESANDO</span>

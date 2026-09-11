@@ -158,6 +158,10 @@ export function CaptureScreen() {
               background: BRAND.colors.primary,
               color: BRAND.colors.white,
               fontFamily: BRAND.fonts.display,
+              // KioskDisplay solo esta registrada en 700 (ver FONT_FACES). Pedirla sin
+              // declarar peso deja el emparejado en manos del navegador y cada motor lo
+              // resuelve distinto: en movil el texto se desplazaba unos pixeles.
+              fontWeight: 700,
               fontSize: L.shutter.fontSize,
               letterSpacing: '0.04em',
               boxShadow: '0 14px 34px rgba(0,0,0,0.4)',

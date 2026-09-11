@@ -49,6 +49,10 @@ export function StartScreen() {
           whiteSpace: 'nowrap',
           color: BRAND.colors.white,
           fontFamily: BRAND.fonts.display,
+          // KioskDisplay solo esta registrada en 700 (ver FONT_FACES). Pedirla sin
+          // declarar peso deja el emparejado en manos del navegador y cada motor lo
+          // resuelve distinto: en movil el texto se desplazaba unos pixeles.
+          fontWeight: 700,
         }}
       >
         BE UNFORGETTABLE
@@ -130,7 +134,7 @@ export function StartScreen() {
       >
         <span
           className="whitespace-nowrap"
-          style={{ left: L.pill.eligesX, top: L.pill.eligesY, fontFamily: BRAND.fonts.display, fontSize: L.pill.eligesFontSize }}
+          style={{ left: L.pill.eligesX, top: L.pill.eligesY, fontFamily: BRAND.fonts.display, fontWeight: 700, fontSize: L.pill.eligesFontSize }}
         >
           TÚ ELIGES.
         </span>
@@ -155,6 +159,10 @@ export function StartScreen() {
           background: BRAND.colors.white,
           color: BRAND.colors.primaryMockup,
           fontFamily: BRAND.fonts.display,
+          // KioskDisplay solo esta registrada en 700 (ver FONT_FACES). Pedirla sin
+          // declarar peso deja el emparejado en manos del navegador y cada motor lo
+          // resuelve distinto: en movil el texto se desplazaba unos pixeles.
+          fontWeight: 700,
           fontSize: L.cta.fontSize,
           letterSpacing: '0.06em',
           boxShadow: L.cta.shadow,
@@ -192,7 +200,7 @@ function InstructionsCard() {
       </div>
       <p
         className="absolute left-0 right-0 text-center"
-        style={{ top: L.step1.top, fontSize: L.step1.fontSize, color: red, fontFamily: BRAND.fonts.display }}
+        style={{ top: L.step1.top, fontSize: L.step1.fontSize, color: red, fontFamily: BRAND.fonts.display, fontWeight: 700 }}
       >
         1. ELIGE LA PALABRA QUE MÁS TE DEFINA.
       </p>
@@ -217,6 +225,10 @@ function InstructionsCard() {
           fontSize: L.stepsRow.fontSize,
           color: red,
           fontFamily: BRAND.fonts.display,
+          // KioskDisplay solo esta registrada en 700 (ver FONT_FACES). Pedirla sin
+          // declarar peso deja el emparejado en manos del navegador y cada motor lo
+          // resuelve distinto: en movil el texto se desplazaba unos pixeles.
+          fontWeight: 700,
         }}
       >
         2. PRUEBA EL PRODUCTO
@@ -262,6 +274,10 @@ function InstructionsCard() {
           fontSize: L.stepsRow.fontSize,
           color: red,
           fontFamily: BRAND.fonts.display,
+          // KioskDisplay solo esta registrada en 700 (ver FONT_FACES). Pedirla sin
+          // declarar peso deja el emparejado en manos del navegador y cada motor lo
+          // resuelve distinto: en movil el texto se desplazaba unos pixeles.
+          fontWeight: 700,
         }}
       >
         3. HAZ TU MEJOR POSE, TOMÁTE LA FOTO Y RECIBELA POR QR
@@ -318,6 +334,10 @@ function InstructionsCard() {
           fontSize: L.wallTitle.fontSize,
           color: BRAND.colors.white,
           fontFamily: BRAND.fonts.display,
+          // KioskDisplay solo esta registrada en 700 (ver FONT_FACES). Pedirla sin
+          // declarar peso deja el emparejado en manos del navegador y cada motor lo
+          // resuelve distinto: en movil el texto se desplazaba unos pixeles.
+          fontWeight: 700,
         }}
       >
         NUESTRA PARED

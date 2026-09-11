@@ -8,7 +8,7 @@
  * cuánto cuesta de verdad una pieza y detectar fugas antes de una jornada larga.
  * No entra en el build de producción (Vite solo empaqueta index.html).
  */
-import { EXPORT, PERSON, WORDS } from '../src/config'
+import { EXPORT, PERSON, WORDS, IMAGES } from '../src/config'
 import { composePiece } from '../src/compose/pipeline'
 
 const out = document.getElementById('out')!
@@ -29,7 +29,7 @@ async function syntheticFrame() {
   g.addColorStop(0, '#2b3a55'); g.addColorStop(1, '#0d1017')
   ctx.fillStyle = g; ctx.fillRect(0, 0, w, h)
 
-  const person = await createImageBitmap(await (await fetch('/images/model.png')).blob())
+  const person = await createImageBitmap(await (await fetch(IMAGES.model)).blob())
   const scale = Math.max(w / person.width, h / person.height)
   const dw = person.width * scale, dh = person.height * scale
   ctx.drawImage(person, (w - dw) / 2, (h - dh) * 0.1, dw, dh)

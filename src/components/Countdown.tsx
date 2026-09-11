@@ -66,6 +66,10 @@ export function Countdown({ onComplete }: { onComplete: () => void }) {
         style={{
           color: BRAND.colors.white,
           fontFamily: BRAND.fonts.display,
+          // KioskDisplay solo esta registrada en 700 (ver FONT_FACES). Pedirla sin
+          // declarar peso deja el emparejado en manos del navegador y cada motor lo
+          // resuelve distinto: en movil el texto se desplazaba unos pixeles.
+          fontWeight: 700,
           fontSize: L.fontSize,
           lineHeight: 1,
           textShadow: '0 4px 24px rgba(0,0,0,0.5)',

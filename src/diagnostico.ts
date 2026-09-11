@@ -9,7 +9,7 @@
  * Es una entrada aparte del build (ver vite.config.ts): no entra en el bundle
  * del kiosco ni lo lastra.
  */
-import { DETECTION, EXPORT, IMAGES } from './config'
+import { BRAND, DETECTION, EXPORT, FONT_FACES, IMAGES } from './config'
 
 const out = document.getElementById('out')!
 const lines: string[] = []
@@ -66,6 +66,10 @@ async function run() {
     const info = gl.getExtension('WEBGL_debug_renderer_info')
     if (info) say(`   GPU: ${gl.getParameter(info.UNMASKED_RENDERER_WEBGL)}`)
   }
+  say()
+
+  say('── TIPOGRAFIAS ──')
+  await comprobarFuentes()
   say()
 
   say('── ASSETS ──')
@@ -147,6 +151,35 @@ async function run() {
 
   say()
   say('── FIN ──')
+}
+
+/**
+ * ¿Se están usando de verdad las tipografías de marca, o el navegador cayó al
+ * respaldo?
+ *
+ * Importa para el centrado vertical del texto de los botones. Flex centra la
+ * CAJA DE LINEA, pero dónde caen los glifos dentro de esa caja lo decide la
+ * línea base, y eso sale de las métricas de la fuente. Si en un móvil la fuente
+ * de marca no se aplica y entra una del sistema, el texto se mueve unos píxeles
+ * aunque la caja esté en el mismo sitio.
+ *
+ * El sospechoso: `KioskDisplay` está registrada SOLO en peso 700, pero los
+ * botones la piden sin declarar peso (o sea, 400). Cada motor resuelve ese
+ * desajuste a su manera.
+ */
+async function comprobarFuentes() {
+  await document.fonts.ready
+
+  // Solo se informa de si cada cara está registrada y disponible. Se intentó
+  // además deducir por anchos de texto si el navegador la estaba aplicando de
+  // verdad, y daba resultados que no se sostenían —`KioskBody` medía igual que
+  // el respaldo, cuando la app claramente la renderiza—, así que se quitó: un
+  // diagnóstico en el que no se puede confiar es peor que no tenerlo.
+  for (const { family, weight, style } of FONT_FACES) {
+    const ok = document.fonts.check(`${style} ${weight} 48px "${family}"`)
+    mark(ok, `${family}`, `registrada en ${weight} ${style}`)
+  }
+  say(`   familia de titulares en uso: ${BRAND.fonts.display.split(',')[0]}`)
 }
 
 /** Figura clara sobre fondo plano: silueta de cabeza y hombros. */

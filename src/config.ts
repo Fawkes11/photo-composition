@@ -35,7 +35,11 @@ const asset = (path: string): string => `${BASE.replace(/\/$/, '')}/${path.repla
 
 export const BRAND = {
   name: 'REVLON',
-  claim: 'SÉ INOLVIDABLE',
+  /**
+   * El titular de la pieza va en INGLÉS, como el de la pantalla de inicio.
+   * Es lo único que se traduce: el resto de la app sigue en español.
+   */
+  claim: 'BE UNFORGETTABLE',
   colors: {
     black: '#0B0B0C',
     ink: '#141416',
@@ -473,7 +477,15 @@ export const CLAIM_TEXT = {
   render: true,
   text: BRAND.claim,
   // Frame "Fondo" del Figma (371:13317): x=67, y=215, 947 × 176.
-  fontSize: 156,
+  //
+  // 127 y no 156 porque el titular pasó a inglés: "BE UNFORGETTABLE" tiene 16
+  // caracteres frente a los 14 de "SÉ INOLVIDABLE", y a 156 medía 1161.9 px —
+  // se salía del lienzo de 1080 por 82.
+  //
+  // El tamaño sale de conservar la CAJA del diseño, no el cuerpo de letra:
+  // 156 × (947 / 1161.9) = 127. Así la frase ocupa los mismos 947 px que
+  // ocupaba la española, con los mismos 67 px de margen a cada lado.
+  fontSize: 127,
   /** Y de la línea media del texto (canvas `textBaseline: 'middle'`). */
   centerY: 300,
   letterSpacing: 0.02,
