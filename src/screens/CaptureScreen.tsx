@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { BRAND, CAMERA, DEBUG, LAYOUT, TIMING } from '../config'
+import { BRAND, CAMERA, DEBUG, FRAMING, LAYOUT, TIMING } from '../config'
 import { Countdown } from '../components/Countdown'
 import { FramingDebugHUD } from '../components/FramingDebugHUD'
 import { FramingGuide } from '../components/FramingGuide'
@@ -63,6 +63,17 @@ export function CaptureScreen() {
   const enabled = cameraState === 'ready' && (DEBUG.captureAlwaysEnabled || isCaptureEnabled(status))
   const showError = cameraState === 'error'
 
+  /**
+   * Texto de la banda inferior.
+   *
+   * Los errores se muestran SIEMPRE. Apagar `FRAMING.ui.message` silencia la
+   * ayuda de encuadre, no los fallos: dejar a alguien delante de una cámara
+   * rota sin explicación sería otra cosa muy distinta de lo que se pidió.
+   */
+  const message = showError
+    ? (cameraError ?? 'Cámara no disponible')
+    : (storeError ?? (FRAMING.ui.message ? guideMessage(status) : ''))
+
   return (
     <ScreenLayer className="bg-black">
       <video
@@ -74,7 +85,7 @@ export function CaptureScreen() {
         style={{ transform: CAMERA.mirrorPreview ? 'scaleX(-1)' : undefined }}
       />
 
-      {phase === 'framing' && <FramingGuide status={status} />}
+      {phase === 'framing' && FRAMING.ui.guide && <FramingGuide status={status} />}
 
       {DEBUG.framingHud && <FramingDebugHUD status={status} faceRect={faceRect} />}
 
@@ -112,18 +123,20 @@ export function CaptureScreen() {
             ← VOLVER
           </button>
 
-          <p
-            className="pointer-events-none absolute left-0 right-0 text-center"
-            style={{
-              top: L.status.top,
-              fontSize: L.status.fontSize,
-              color: BRAND.colors.white,
-              fontFamily: BRAND.fonts.body,
-              textShadow: '0 4px 22px rgba(0,0,0,0.75)',
-            }}
-          >
-            {showError ? (cameraError ?? 'Cámara no disponible') : (storeError ?? guideMessage(status))}
-          </p>
+          {message && (
+            <p
+              className="pointer-events-none absolute left-0 right-0 text-center"
+              style={{
+                top: L.status.top,
+                fontSize: L.status.fontSize,
+                color: BRAND.colors.white,
+                fontFamily: BRAND.fonts.body,
+                textShadow: '0 4px 22px rgba(0,0,0,0.75)',
+              }}
+            >
+              {message}
+            </p>
+          )}
 
           <CameraIcon
             size={L.cameraIcon.size}

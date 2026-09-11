@@ -185,6 +185,26 @@ export const FRAMING = {
   framesToConfirm: 5,
   /** Frames consecutivos inválidos para salir de OK. */
   framesToRelease: 10,
+  /**
+   * Qué se le enseña al usuario mientras encuadra.
+   *
+   * Ambos APAGADOS por decisión del cliente: quiere la cámara limpia, sin
+   * silueta ni mensajes. Se dejan como interruptores y no se borra el código
+   * porque la guía sigue siendo útil para calibrar y puede volver a pedirse.
+   *
+   * ⚠️ Apagarlos NO desactiva la validación. El encuadre se sigue evaluando y
+   * sigue decidiendo cuándo se habilita "TOMAR FOTO"; lo único que cambia es
+   * que el usuario deja de ver por qué. Con la guía apagada, la validación
+   * TIENE que estar también desactivada (`DEBUG.captureAlwaysEnabled: true`);
+   * si no, alguien mal encuadrado se queda delante de un botón apagado, sin
+   * silueta, sin mensaje y sin ninguna pista de qué hacer.
+   */
+  ui: {
+    /** Silueta y escuadras superpuestas al vídeo. */
+    guide: false,
+    /** Mensajes de ayuda: "Colócate dentro de la guía", "Acércate un poco"… */
+    message: false,
+  },
   colors: {
     idle: 'rgba(255,255,255,0.40)',
     searching: 'rgba(255,255,255,0.75)',
