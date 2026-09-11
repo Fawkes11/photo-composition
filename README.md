@@ -264,8 +264,14 @@ la maqueta se puede revisar entera sabiendo exactamente qué queda pendiente:
 
 | Qué                        | Dónde va                       | Mientras tanto                  |
 | -------------------------- | ------------------------------ | ------------------------------- |
-| Fondo terciopelo (pant. 04) | `public/images/backdrop-deep.png` | Degradado aproximado         |
 | LUT `.cube`                 | `public/luts/`                 | Curvas por canal de `PHOTO_STYLES` |
+
+**El fondo terciopelo de la pantalla 04 tampoco está pendiente: no existe.**
+Salía del brief inicial, pero el diseño no lo recogió: en el Figma las cuatro
+pantallas con fondo (01, 02, 04 y 05) apuntan al MISMO nodo, con idéntica
+posición y tamaño. La 04 usa `backdrop.png` como las demás, y la variante
+`deep` del componente se eliminó. Mientras existió, esa pantalla pedía un
+archivo que nadie iba a entregar y arrastraba el marcador turquesa en cada pase.
 
 **La capa FRENTE ya no está pendiente: no existe.** Figuraba aquí un
 `front-default.png` que nadie iba a entregar, porque lo que va por encima de la

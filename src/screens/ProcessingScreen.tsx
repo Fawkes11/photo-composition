@@ -70,7 +70,7 @@ export function ProcessingScreen() {
 
   return (
     <ScreenLayer>
-      <Backdrop deep />
+      <Backdrop />
       <BrandArc />
 
       <div

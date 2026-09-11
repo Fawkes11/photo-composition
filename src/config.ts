@@ -51,8 +51,6 @@ export const BRAND = {
     primaryMockup: '#DD1945',
     /** Rojo profundo del fondo y de la pantalla de carga. */
     primaryDeep: '#8E0C1E',
-    /** Casi negro rojizo: fondo de la pantalla 04. */
-    velvet: '#4A0510',
     accent: '#F7C7CF',
     /** Filo dorado del arco de marca. */
     gold: '#C9A227',
@@ -370,7 +368,14 @@ export const TEXT_LAYERS = {
     maxLines: 1,
     verticalAlign: 'middle',
     splitOnSentence: false,
-    shadow: { color: 'rgba(0,0,0,0.45)', blur: 24, offsetX: 0, offsetY: 6 },
+    /**
+     * Sombra de la palabra. Canvas solo admite UNA sombra por trazo, así que
+     * no se puede apilar una suave y otra cerrada como en CSS: hay que elegir.
+     * Se prefiere cerrada y oscura antes que ancha y tenue, porque el texto cae
+     * sobre la foto —piel, vestido, fondo— y lo que hace falta es separarlo del
+     * contenido, no darle un halo difuso.
+     */
+    shadow: { color: 'rgba(0,0,0,0.70)', blur: 18, offsetX: 0, offsetY: 4 },
   },
   phrase: {
     // Frame "Frente" del Figma: la frase va en x=139, y=1367, 746×63.
@@ -389,7 +394,8 @@ export const TEXT_LAYERS = {
     maxLines: 2,
     verticalAlign: 'bottom',
     splitOnSentence: true,
-    shadow: { color: 'rgba(0,0,0,0.35)', blur: 16, offsetX: 0, offsetY: 3 },
+    /** Mismo criterio que la palabra, algo más contenida por el menor cuerpo. */
+    shadow: { color: 'rgba(0,0,0,0.60)', blur: 12, offsetX: 0, offsetY: 3 },
   },
 } satisfies Record<'word' | 'phrase', TextBlockConfig>
 
@@ -730,9 +736,6 @@ export const IMAGES = {
   /** Filo difuminado bajo "BE UNFORGETTABLE" (Vector 10 del Figma). */
   titleUnderline: asset('/images/decor/title-underline.svg'),
 
-  /* — PENDIENTE — */
-  /** Fondo terciopelo oscuro de la pantalla 04 (la de procesando). */
-  backdropDeep: asset('/images/backdrop-deep.png'),
 } as const
 
 /**
