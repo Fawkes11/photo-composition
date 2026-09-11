@@ -98,7 +98,13 @@ export function StartScreen() {
           label="revista"
           fit="cover"
           className="pointer-events-none"
-          style={{ left: magazine.x, top: magazine.y, width: magazine.width, height: magazine.height }}
+          style={{
+            left: magazine.x,
+            top: magazine.y,
+            width: magazine.width,
+            height: magazine.height,
+            transform: `rotate(${magazine.rotate}deg)`,
+          }}
         />
       ))}
       <AssetImage
