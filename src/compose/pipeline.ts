@@ -16,6 +16,7 @@ import { acquire, release, trim } from '../lib/canvasPool'
 import type { Rect } from '../lib/geometry'
 import { drawSpacedCentered, drawTextBlock, layoutText } from '../lib/textLayout'
 import { buildMaskCanvas, segmentPerson } from '../vision/segmentation'
+import { decontaminateEdges } from './edgeDecontamination'
 import { applyTreatment } from './imageTreatment'
 import type { CapturedFrame } from '../store/kioskStore'
 
@@ -124,6 +125,11 @@ async function buildPersonLayer(frame: CapturedFrame, style: PhotoStyle): Promis
 
     // Tratamiento (piel → grading → glow → viñeteado) antes de recortar.
     await applyTreatment(tile.ctx, boxWidth, boxHeight, style)
+
+    // Le quita al contorno el color del fondo original ANTES de recortar:
+    // necesita ver los píxeles de fondo de alrededor para estimar qué restar,
+    // y tras el recorte esos píxeles ya no existen.
+    decontaminateEdges(tile.ctx, maskCanvas, boxWidth, boxHeight)
 
     // Recorte: la máscara ya llega alineada y con el borde difuminado.
     tile.ctx.save()

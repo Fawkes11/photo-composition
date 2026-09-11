@@ -142,9 +142,19 @@ export function buildMaskCanvas(
   const { width, height } = mask
   const alpha = new Uint8ClampedArray(width * height)
   const threshold = PERSON.maskThreshold
+  const k = PERSON.maskContrast
 
+  // Curva en S en vez de umbral duro.
+  //
+  // Antes esto era `mask.data[i] >= threshold ? 255 : 0`, que tiraba el
+  // gradiente del borde —donde está el pelo— y luego lo fingía con un
+  // desenfoque uniforme. El desenfoque no sabe dónde hay mechones: difumina
+  // igual el contorno de un hombro que una melena rizada.
+  //
+  // La curva separa figura y fondo con la misma decisión, pero deja vivo el
+  // gradiente que el modelo sí había calculado.
   for (let i = 0; i < alpha.length; i++) {
-    alpha[i] = mask.data[i] >= threshold ? 255 : 0
+    alpha[i] = 255 / (1 + Math.exp(-k * (mask.data[i] - threshold)))
   }
 
   // Erosión en px de la máscara: el mismo `maskErodePx` (definido en px de

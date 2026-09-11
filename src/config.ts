@@ -310,8 +310,50 @@ export const PERSON = {
    * umbral elimina el halo de fondo antes de difuminar.
    */
   maskThreshold: 0.5,
-  /** Contrae (negativo) o expande la máscara antes del feather, en px. */
-  maskErodePx: 1,
+  /**
+   * Contrae la máscara antes del difuminado, en px.
+   *
+   * Estaba en 1 para arrancar el halo de fondo pegado al contorno. Ahora de eso
+   * se encarga la descontaminación de borde, que corrige el COLOR en vez de
+   * recortar forma — así que erosionar aquí solo serviría para comerse pelo.
+   */
+  maskErodePx: 0,
+  /**
+   * Dureza de la curva que se aplica a la máscara (mayor = más contrastada).
+   *
+   * Antes se binarizaba: `data[i] >= 0.5 ? 255 : 0`. Eso tiraba el gradiente
+   * del borde —justo donde vive el pelo— y luego se fingía suavidad con un
+   * desenfoque uniforme, que no sabe dónde hay mechones y dónde no.
+   *
+   * Con una curva en S se separa figura de fondo igual de bien pero el
+   * gradiente sobrevive. 14 separa con claridad sin aplanar las semitransparencias.
+   */
+  maskContrast: 45,
+  /**
+   * Descontaminación de borde.
+   *
+   * En los píxeles semitransparentes el color observado es una MEZCLA del
+   * sujeto y del fondo original: C = a·F + (1-a)·B. Si alguien se retrata
+   * contra una pared azul, ese azul viaja pegado a su pelo y aterriza sobre el
+   * rojo de la pieza — es el fleco azulado que se ve en el bake-off.
+   *
+   * Aquí se despeja F, el color real del sujeto, estimando B a partir de los
+   * píxeles de fondo cercanos.
+   */
+  edgeDecontamination: {
+    enabled: true,
+    /** Radio de búsqueda del color de fondo, en px de EXPORT. */
+    searchRadiusPx: 4,
+    /** Solo se tocan los píxeles de borde: ni opacos ni transparentes. */
+    alphaMin: 0.04,
+    alphaMax: 0.96,
+    /**
+     * Cuánto se aplica la corrección. Por debajo de 1 porque despejar al 100 %
+     * amplifica el ruido en los píxeles de alfa muy bajo, donde dividir entre
+     * `a` dispara cualquier error.
+     */
+    strength: 0.85,
+  },
 } as const
 
 /* ──────────── CAPA FRENTE: TEXTO RENDERIZADO POR LA APP ────── */
