@@ -778,6 +778,25 @@ export type FlareConfig = {
 }
 
 /** Aspecto compartido de los haces y los destellos. */
+/**
+ * Tonos del destello, como filtros CSS sobre el lienzo.
+ *
+ * `sepia` es lo que hace el trabajo: lleva todo a un dorado sin tocar la
+ * luminancia, y sobre eso `saturate` y `hue-rotate` ajustan la intensidad.
+ *
+ * Ojo: el tono NO se cambia con `hueShift`. Ese rota el matiz pero respeta la
+ * saturación, y casi todos los fantasmas de la tabla original son
+ * prácticamente blancos — rotar un blanco sigue dando blanco. Probado de 265 a
+ * 325 y solo se movía el arco del anillo. Para virar el destello hay que
+ * teñirlo, que es lo que hace esto. Comparados en dev/flare-tones.html.
+ */
+export const FLARE_TINTS = {
+  /** El original: rosa nacarado. */
+  ninguno: 'none',
+  /** Oro: el tono cálido elegido para la activación. */
+  oro: 'sepia(1) saturate(3.4) hue-rotate(-22deg)',
+} as const
+
 export const DECOR = {
   /**
    * Los haces son SVG exportados del Figma (nodos "Group 9/10/11/12").
@@ -814,25 +833,17 @@ export const DECOR = {
     intensity: 2.2,
     hueShift: 250,
     spread: 2,
-    tint: 'none',
+    /**
+     * Tono por defecto de TODOS los destellos.
+     *
+     * Se pone aquí y no en cada pantalla a propósito: los tres destellos de la
+     * app (01, 02 y 05) se fusionan con estos valores por defecto, así que el
+     * tono se cambia en un único sitio. Una pantalla concreta puede pisarlo
+     * declarando su propio `tint`.
+     */
+    tint: FLARE_TINTS.oro,
   },
-  /**
-   * Tonos del destello, como filtros CSS sobre el lienzo.
-   *
-   * `sepia` es lo que hace el trabajo: lleva todo a un marrón dorado sin tocar
-   * la luminancia, y sobre eso `saturate` sube el color y `hue-rotate` ajusta
-   * hacia el ámbar o hacia el oro. Comparados en dev/flare-tones.html.
-   */
-  flareTints: {
-    /** El de siempre: rosa nacarado. */
-    ninguno: 'none',
-    /** Dorado contenido: se nota cálido sin dejar de leerse como luz. */
-    dorado: 'sepia(0.55) saturate(2.2) hue-rotate(-12deg)',
-    /** Ámbar: más amarillo, ya claramente de color. */
-    ambar: 'sepia(0.8) saturate(2.8) hue-rotate(-18deg)',
-    /** Oro intenso: el más saturado, roza lo anaranjado. */
-    oro: 'sepia(1) saturate(3.4) hue-rotate(-22deg)',
-  },
+  flareTints: FLARE_TINTS,
 } as const
 
 /* ───────────────────────── DEPURACIÓN ──────────────────────── */

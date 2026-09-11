@@ -19,10 +19,8 @@ import { LensFlare } from '../src/components/LensFlare'
 const SIZE = 300
 
 const TONOS: readonly { tint: string; etiqueta: string }[] = [
-  { tint: DECOR.flareTints.ninguno, etiqueta: 'ninguno · ACTUAL' },
-  { tint: DECOR.flareTints.dorado, etiqueta: 'dorado' },
-  { tint: DECOR.flareTints.ambar, etiqueta: 'ambar' },
-  { tint: DECOR.flareTints.oro, etiqueta: 'oro' },
+  { tint: DECOR.flareTints.ninguno, etiqueta: 'ninguno · el original' },
+  { tint: DECOR.flareTints.oro, etiqueta: 'oro · EN USO' },
 ]
 
 // Exportada solo para satisfacer a react-refresh: este archivo es un punto de
