@@ -41,6 +41,9 @@ export function useIdleReset() {
     const interval = window.setInterval(() => {
       const idleMs = Date.now() - lastActivityRef.current
       if (idleMs >= TIMING.idleResetMs) {
+        // El aviso muere con la sesión que anunciaba. Sin esto se quedaba con
+        // su último valor ("…en 1s") y sobrevivía al reset.
+        setWarningSecondsLeft(null)
         reset()
         return
       }
@@ -52,7 +55,15 @@ export function useIdleReset() {
       window.clearInterval(interval)
       for (const event of ACTIVITY_EVENTS) window.removeEventListener(event, markActivity)
     }
-  }, [armed, screen, reset])
+    // `screen` NO va en las dependencias a propósito: dentro del efecto no se
+    // usa, solo a través de `armed`. Incluirlo reiniciaba el temporizador en
+    // cada cambio de pantalla, justo lo contrario de lo que dice la cabecera.
+  }, [armed, reset])
 
-  return { warningSecondsLeft }
+  // El aviso se DERIVA de `armed` en vez de apagarse a mano. Mientras se
+  // limpiaba por separado, uno que estuviera en pantalla al saltar el reset
+  // sobrevivía al salto al inicio: allí el efecto sale antes de enganchar los
+  // listeners de actividad, así que ya no quedaba nada capaz de borrarlo.
+  // Derivándolo, en el inicio no puede verse aunque el estado siga puesto.
+  return { warningSecondsLeft: armed ? warningSecondsLeft : null }
 }
