@@ -32,7 +32,11 @@ export type ComposedPiece = {
   /** Object URL creado a partir del blob. Se revoca al soltar la sesión. */
   objectUrl: string
   /** Enlace que codifica el QR (hoy lo produce el stub de subida). */
-  downloadUrl: string
+  /**
+   * URL del QR. `null` cuando la subida falló: la pieza es válida y se entrega
+   * igual, simplemente sin código de descarga. Ver src/lib/upload.ts.
+   */
+  downloadUrl: string | null
 }
 
 type KioskState = {

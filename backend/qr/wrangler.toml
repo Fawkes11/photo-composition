@@ -1,0 +1,29 @@
+# Configuración del Worker del QR.
+#
+# Antes de desplegar:
+#   1. npm install
+#   2. npx wrangler login
+#   3. npx wrangler r2 bucket create revlon-piezas
+#   4. npx wrangler deploy
+#
+# Las CADUCIDADES no se ponen aquí: son reglas de ciclo de vida del bucket, que
+# se configuran una vez en el panel de Cloudflare (R2 > revlon-piezas > Settings
+# > Object lifecycle rules). Ver backend/README.md.
+
+name = "revlon-kiosk-qr"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+
+[[r2_buckets]]
+binding = "PIEZAS"
+bucket_name = "revlon-piezas"
+
+[vars]
+# Archivo de piezas: APAGADO. Encenderlo guarda una segunda copia bajo a/ con su
+# propia caducidad. Requiere autorización por escrito de la marca: son fotos de
+# personas identificables. Ver backend/README.md.
+ARCHIVE_ENABLED = "false"
+
+# Orígenes autorizados a subir, separados por comas. Vacío = cualquiera.
+# En producción: "https://fawkes11.github.io"
+ALLOWED_ORIGINS = ""

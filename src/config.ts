@@ -689,10 +689,32 @@ export function getWord(id: string | null): WordOption | null {
 
 /* ───────────────────── RESULTADO / QR ──────────────────────── */
 
+/* ──────────────────── BACKEND (subida y QR) ────────────────── */
+
+/**
+ * Servicio que guarda la pieza y sirve el enlace del QR.
+ *
+ * `baseUrl` vacío = sin backend: `uploadPiece` no llama a la red y devuelve una
+ * URL local de mentira, como hasta ahora, para poder probar el flujo entero sin
+ * depender de nada. En cuanto se rellena, empieza a subir de verdad.
+ *
+ * `timeoutMs` existe porque la subida ocurre con el usuario delante, mirando la
+ * pantalla de "procesando". Si la red de la feria va mal, es preferible seguir
+ * y entregar la pieza sin QR que dejar a alguien esperando sin fin.
+ */
+export const UPLOAD = {
+  /** Ej.: 'https://revlon-kiosk.<subdominio>.workers.dev'. Vacío = desactivado. */
+  baseUrl: '',
+  /** Tope de espera de la subida. Pasado esto se sigue sin QR. */
+  timeoutMs: 8000,
+  /** Reintentos antes de rendirse. La feria tiene wifi irregular. */
+  retries: 2,
+} as const
+
 export const RESULT = {
   mimeType: 'image/jpeg',
   quality: 0.92,
-  /** Base del enlace de descarga. El backend real la reemplaza. */
+  /** Base del enlace cuando NO hay backend (ver UPLOAD.baseUrl). */
   downloadBaseUrl: 'https://descarga.ejemplo.com/p',
   qr: {
     sizePx: 420,

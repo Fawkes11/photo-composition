@@ -22,7 +22,9 @@ export function ResultScreen() {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!piece) return
+    // Sin URL no hay QR que generar: la subida falló y la pieza se entrega
+    // igual. La pantalla lo dice en lugar de enseñar un hueco blanco.
+    if (!piece?.downloadUrl) return
     let cancelled = false
     QRCode.toDataURL(piece.downloadUrl, {
       width: RESULT.qr.sizePx,
@@ -96,7 +98,16 @@ export function ResultScreen() {
           boxShadow: '0 16px 44px rgba(0,0,0,0.35)',
         }}
       >
-        {qrDataUrl && <img src={qrDataUrl} alt="QR de descarga" className="h-full w-full" />}
+        {qrDataUrl ? (
+          <img src={qrDataUrl} alt="QR de descarga" className="h-full w-full" />
+        ) : (
+          <p
+            className="px-4 text-center leading-tight"
+            style={{ color: BRAND.colors.primary, fontFamily: BRAND.fonts.body, fontSize: 22 }}
+          >
+            Descarga no disponible ahora mismo.
+          </p>
+        )}
       </div>
 
       <ResultButton label="TOMAR DE NUEVO" onClick={retake} top={L.buttons.top} />
