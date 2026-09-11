@@ -36,7 +36,7 @@ export function ScreenLayer({
   style?: CSSProperties
 }) {
   return (
-    <div className={`absolute inset-0 ${className}`} style={style}>
+    <div className={`absolute overflow-hidden inset-0 ${className}`} style={style}>
       {children}
     </div>
   )
