@@ -88,7 +88,7 @@ async function run() {
   say('── SEGMENTACION ──')
   say('(cargando MediaPipe, puede tardar en la primera vez…)')
   try {
-    const { loadSegmenter } = await import('./vision/visionLoader')
+    const { loadSegmenter, currentDelegate } = await import('./vision/visionLoader')
     const t0 = performance.now()
     const segmenter = await loadSegmenter()
     mark(true, 'segmentador cargado', `${Math.round(performance.now() - t0)} ms · delegate ${DETECTION.delegate}`)
@@ -126,6 +126,9 @@ async function run() {
     for (let i = 0; i < mask.data.length; i++) if (mask.data[i] >= 0.5) cubierto++
 
     say(`   inferencia: ${ms} ms · mascara ${mask.width}×${mask.height}`)
+    // Puede haber cambiado durante la segmentación: si la GPU devolvió una
+    // máscara degenerada, `segmentPerson` reconstruye el motor en CPU.
+    say(`   delegate tras segmentar: ${currentDelegate()}`)
     say(`   persona detectada: ${((cubierto / total) * 100).toFixed(1)} % del encuadre`)
 
     say(`   confianza media: ${medDentro.toFixed(2)} en la figura · ${medFuera.toFixed(2)} fuera`)

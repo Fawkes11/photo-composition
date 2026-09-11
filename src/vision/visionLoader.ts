@@ -19,6 +19,20 @@ let filesetPromise: Promise<WasmFileset> | null = null
 let facePromise: Promise<FaceDetector> | null = null
 let segmenterPromise: Promise<ImageSegmenter> | null = null
 
+/**
+ * Delegate impuesto tras detectar que la GPU devuelve basura.
+ *
+ * `withDelegateFallback` solo cubre el caso en que CREAR el segmentador lanza.
+ * Hay GPUs que lo crean sin protestar, ejecutan la inferencia sin protestar, y
+ * devuelven una máscara entera de ceros. Medido en un Samsung A56 (Xclipse 540
+ * sobre Vulkan): segmentador cargado en 153 ms, inferencia en 457 ms, y
+ * confianza 0.00 dentro y fuera de la figura.
+ *
+ * No hay excepción que capturar, así que el fallo tiene que detectarse por el
+ * RESULTADO. De eso se encarga `segmentPerson`, que llama aquí cuando lo ve.
+ */
+let forcedDelegate: 'GPU' | 'CPU' | null = null
+
 function getFileset(): Promise<WasmFileset> {
   filesetPromise ??= FilesetResolver.forVisionTasks(DETECTION.wasmPath)
   return filesetPromise
@@ -30,10 +44,11 @@ function getFileset(): Promise<WasmFileset> {
  * porque la máquina que tocó tiene una integrada rara.
  */
 async function withDelegateFallback<T>(create: (delegate: 'GPU' | 'CPU') => Promise<T>): Promise<T> {
+  const preferido = forcedDelegate ?? DETECTION.delegate
   try {
-    return await create(DETECTION.delegate)
+    return await create(preferido)
   } catch (error) {
-    if (DETECTION.delegate === 'CPU') throw error
+    if (preferido === 'CPU') throw error
     console.warn('[vision] delegate GPU no disponible, se reintenta en CPU', error)
     return create('CPU')
   }
@@ -73,6 +88,27 @@ export function loadSegmenter(): Promise<ImageSegmenter> {
     throw error
   })
   return segmenterPromise
+}
+
+/**
+ * Reconstruye el segmentador en CPU y lo deja fijado ahí para el resto de la
+ * sesión.
+ *
+ * Lo llama `segmentPerson` cuando detecta que la máscara es degenerada. Es más
+ * lento que la GPU, pero un kiosco que entrega piezas sin persona durante tres
+ * semanas —sin un solo error en consola que lo delate— es mucho peor que uno
+ * que tarda un poco más.
+ */
+export async function forceSegmenterOnCpu(): Promise<ImageSegmenter> {
+  forcedDelegate = 'CPU'
+  segmenterPromise = null
+  console.warn('[vision] la GPU devolvió una máscara inválida; se reconstruye el segmentador en CPU')
+  return loadSegmenter()
+}
+
+/** Delegate con el que se está corriendo ahora mismo. Para el diagnóstico. */
+export function currentDelegate(): 'GPU' | 'CPU' {
+  return forcedDelegate ?? DETECTION.delegate
 }
 
 /**

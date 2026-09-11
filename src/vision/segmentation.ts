@@ -1,6 +1,7 @@
+import type { ImageSegmenter } from '@mediapipe/tasks-vision'
 import { PERSON } from '../config'
 import type { Rect } from '../lib/geometry'
-import { loadSegmenter } from './visionLoader'
+import { forceSegmenterOnCpu, loadSegmenter } from './visionLoader'
 
 /**
  * Segmentación de la persona (MediaPipe Selfie Segmentation) y construcción de
@@ -33,22 +34,51 @@ export type PersonMask = {
  * comparar. Ver dev/polarity-check.html.
  */
 export async function segmentPerson(source: ImageBitmap | OffscreenCanvas): Promise<PersonMask> {
-  const segmenter = await loadSegmenter()
-  const result = segmenter.segment(source)
+  const primera = await segmentarCon(await loadSegmenter(), source)
 
+  // Si la máscara es degenerada, el delegate GPU puede estar devolviendo basura
+  // sin lanzar. Se reconstruye en CPU y se reintenta UNA vez por sesión.
+  if (degenerada(primera) && !yaSeIntentoCpu) {
+    yaSeIntentoCpu = true
+    // Si la CPU también la da vacía, es que de verdad no había nadie en el
+    // encuadre: no era un fallo del delegate. En cualquier caso se devuelve lo
+    // que dé la CPU, que a partir de aquí es el motor de la sesión.
+    return segmentarCon(await forceSegmenterOnCpu(), source)
+  }
+
+  return primera
+}
+
+let yaSeIntentoCpu = false
+
+function segmentarCon(segmenter: ImageSegmenter, source: ImageBitmap | OffscreenCanvas): Promise<PersonMask> {
+  const result = segmenter.segment(source)
   try {
     const masks = result.confidenceMasks
     if (!masks || masks.length === 0) throw new Error('El segmentador no devolvió máscaras')
 
     const mask = masks[personMaskIndex(segmenter, masks.length)]
-    const raw = mask.getAsFloat32Array()
     // El buffer pertenece a la tarea y muere con result.close(): hay que copiar.
-    const data = new Float32Array(raw)
+    const data = new Float32Array(mask.getAsFloat32Array())
 
-    return { data, width: mask.width, height: mask.height }
+    return Promise.resolve({ data, width: mask.width, height: mask.height })
   } finally {
     result.close()
   }
+}
+
+/**
+ * ¿La máscara no dice nada? Entera a cero o entera a uno.
+ *
+ * Es la firma de un delegate que falla en silencio: en el Samsung A56 la GPU
+ * devolvía confianza 0.00 dentro Y fuera de la figura. Una máscara buena, aunque
+ * el encuadre sea malo, siempre reparte.
+ */
+function degenerada(mask: PersonMask): boolean {
+  let cubierto = 0
+  for (let i = 0; i < mask.data.length; i++) if (mask.data[i] >= PERSON.maskThreshold) cubierto++
+  const fraccion = cubierto / mask.data.length
+  return fraccion < 0.005 || fraccion > 0.995
 }
 
 /** Etiquetas que un modelo de segmentación usa para la clase "persona". */
