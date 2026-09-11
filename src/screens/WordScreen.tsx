@@ -47,7 +47,16 @@ export function WordScreen() {
         className="word-scroller absolute"
         style={{ left: L.list.x, top: L.list.y, width: L.list.width, height: L.list.height }}
       >
-        <div className="grid" style={{ gridTemplateColumns: `repeat(${L.columns}, minmax(0, 1fr))`, gap: L.itemGap }}>
+        <div
+          className="grid"
+          style={{
+            gridTemplateColumns: `repeat(${L.columns}, minmax(0, 1fr))`,
+            // Filas y columnas NO llevan el mismo hueco: 48 entre filas (que es
+            // lo que da el paso de 130 del Figma) y 33 entre columnas.
+            rowGap: L.itemGap,
+            columnGap: L.columnGap,
+          }}
+        >
           {WORDS.map((option) => (
             <button
               key={option.id}

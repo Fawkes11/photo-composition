@@ -16,7 +16,7 @@ import { GHOST_PRESETS, parseHex, rotateHue, type GhostPreset } from '../lib/len
  */
 export function LensFlare({ flare }: { flare: FlareConfig }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const { x, y, size, intensity, hueShift, spread } = { ...DECOR.flareDefaults, ...flare }
+  const { x, y, size, intensity, hueShift, spread, tint } = { ...DECOR.flareDefaults, ...flare }
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -34,7 +34,7 @@ export function LensFlare({ flare }: { flare: FlareConfig }) {
     <canvas
       ref={canvasRef}
       className="pointer-events-none absolute"
-      style={{ left: x, top: y, width: size, height: size, mixBlendMode: 'screen' }}
+      style={{ left: x, top: y, width: size, height: size, mixBlendMode: 'screen', filter: tint }}
       aria-hidden="true"
     />
   )

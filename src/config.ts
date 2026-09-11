@@ -763,6 +763,16 @@ export type FlareConfig = {
   readonly intensity?: number
   /** Rotación de tono aplicada a la paleta original, en grados. */
   readonly hueShift?: number
+  /**
+   * Filtro CSS que se aplica al lienzo entero del destello.
+   *
+   * Existe porque `hueShift` NO basta para cambiarle el tono: rota el matiz
+   * pero respeta la saturación, y casi todos los fantasmas de la tabla original
+   * son prácticamente blancos. Rotar un blanco sigue dando blanco. Para virar
+   * el destello de verdad hay que teñirlo, y eso es lo que hace este filtro.
+   * Ver `DECOR.flareTints` para los presets y dev/flare-tones.html para verlos.
+   */
+  readonly tint?: string
   /** Cuánto se prolonga la cadena de fantasmas más allá del centro. */
   readonly spread?: number
 }
@@ -804,6 +814,24 @@ export const DECOR = {
     intensity: 2.2,
     hueShift: 250,
     spread: 2,
+    tint: 'none',
+  },
+  /**
+   * Tonos del destello, como filtros CSS sobre el lienzo.
+   *
+   * `sepia` es lo que hace el trabajo: lleva todo a un marrón dorado sin tocar
+   * la luminancia, y sobre eso `saturate` sube el color y `hue-rotate` ajusta
+   * hacia el ámbar o hacia el oro. Comparados en dev/flare-tones.html.
+   */
+  flareTints: {
+    /** El de siempre: rosa nacarado. */
+    ninguno: 'none',
+    /** Dorado contenido: se nota cálido sin dejar de leerse como luz. */
+    dorado: 'sepia(0.55) saturate(2.2) hue-rotate(-12deg)',
+    /** Ámbar: más amarillo, ya claramente de color. */
+    ambar: 'sepia(0.8) saturate(2.8) hue-rotate(-18deg)',
+    /** Oro intenso: el más saturado, roza lo anaranjado. */
+    oro: 'sepia(1) saturate(3.4) hue-rotate(-22deg)',
   },
 } as const
 
@@ -940,7 +968,7 @@ export const LAYOUT = {
      */
     wallBand: { x: 20, y: 621, width: 356, height: 181, blur: 19.3 },
     wallTitle: { x: 46, y: 650, width: 222, fontSize: 27 },
-    wallBody: { x: 49, y: 718, width: 240, fontSize: 20, lineHeight: 1.25 },
+    wallBody: { x: 49, y: 718, width: 240, fontSize: 20, lineHeight: 0.97 },
     /** La rotación de −19.3° ya viene horneada en el PNG exportado. */
     lips: { x: 505, y: 712, width: 192, height: 156 },
 
@@ -978,7 +1006,7 @@ export const LAYOUT = {
       eligesFontSize: 36,
       taglineX: 192,
       taglineY: 15,
-      taglineFontSize: 23.5,
+      taglineFontSize: 36,
     },
     /** Radio 15 y texto en el rojo de las maquetas, medido en el Figma. */
     cta: {
@@ -1018,19 +1046,26 @@ export const LAYOUT = {
   word: {
     title: { y: 468, fontSize: 96 },
     subtitle: { y: 597, fontSize: 36 },
-    /** La pista del scroll del Figma va de y=687 a y=1640. */
-    list: { x: 238, y: 687, width: 604, height: 953 },
     /**
-     * El diseño entregado usa UNA columna, no las tres del brief inicial.
-     * Sube el número si vuelve a hacer falta la retícula.
+     * Dos columnas, medidas sobre el Figma: las píldoras de la izquierda están
+     * en x=116 y las de la derecha en x=557, ambas de 408 de ancho. De ahí
+     * salen los 849 de la caja y los 33 de hueco entre columnas.
+     *
+     *   116 + 849 = 965        (849 − 33) / 2 = 408 por píldora
+     *
+     * La pista del scroll va de y=687 a y=1640.
      */
-    columns: 1,
+    list: { x: 116, y: 687, width: 849, height: 953 },
+    columns: 2,
+    /** Hueco ENTRE COLUMNAS. No es el mismo que el de las filas. */
+    columnGap: 33,
     /** 82 de alto + 48 de hueco = los 130 de paso que tiene el Figma. */
     itemHeight: 82,
     itemGap: 48,
     itemFontSize: 38,
     itemRadius: 50,
-    scrollbar: { x: 868, width: 8, thumbHeight: 105 },
+    /** Rectangle 13 del Figma: x=992, justo a la derecha de la segunda columna. */
+    scrollbar: { x: 992, width: 8, thumbHeight: 105 },
     bottomFade: 200,
     beams: [
       { asset: 'a', x: -211, y: -15, width: 757, height: 1261 },

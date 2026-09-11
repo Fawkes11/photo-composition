@@ -304,7 +304,7 @@ function InstructionsCard() {
         style={{ left: L.phone.x, top: L.phone.y, width: L.phone.width, height: L.phone.height }}
       />
       <p
-        className="absolute leading-[1.1]"
+        className="absolute leading-[0.97]"
         style={{
           left: L.wallTitle.x,
           top: L.wallTitle.y,
